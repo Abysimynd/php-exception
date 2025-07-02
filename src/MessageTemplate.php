@@ -17,6 +17,9 @@ class MessageTemplate {
      */
     private array $data;
 
+    /**
+     * Constroi uma mensagem de exceção com base no template passado.
+     */
     public function __construct( string $message ) {
         $this->message = $message;
 
@@ -27,6 +30,11 @@ class MessageTemplate {
         $this->data = $data;
     }
 
+    /**
+     * Constroi e retorna a mensagem.
+     *
+     * @throws Exception
+     */
     public function build(): string {
         foreach ( $this->data as $key => $value ) {
             /** @var int|string $key */
@@ -51,9 +59,14 @@ class MessageTemplate {
         return $this->message;
     }
 
+    /**
+     * Verifica se foram passados parametros para serem usados na construção do template.
+     *
+     * @throws Exception
+     */
     private function hasData(): void {
         try {
-            $data = Exception::get( Config::TEMPLATE_DATA_KEY->value );
+            Exception::get( Config::TEMPLATE_DATA_KEY->value );
         } catch ( Exception $e ) {
             throw new Exception(
                 'Não foi possível recuperar os dados usados na geração da mensagem.',
@@ -63,6 +76,11 @@ class MessageTemplate {
         }
     }
 
+    /**
+     * Verifica se não há nenhum parametro faltando na mensagem.
+     *
+     * @throws Exception
+     */
     private function isValidMessage(): void {
         $pattern = Config::TEMPLATE_DATA_PATTERN->value;
 
@@ -76,6 +94,11 @@ class MessageTemplate {
         }
     }
 
+    /**
+     * Verifica se o parametro sendo usado na mensagem é uma string.
+     *
+     * @throws Exception
+     */
     private function isValidParam( int|string $key, mixed $value ): void {
         if ( is_array( $value ) ) {
             throw new Exception(

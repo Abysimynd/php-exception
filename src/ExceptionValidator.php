@@ -26,6 +26,9 @@ class ExceptionValidator {
         $this->data = $data;
     }
 
+    /**
+     * Valida se a chave sendo usada para registrar ou buscar uma propriedade é valida.
+     */
     public function validateKey( mixed $key, bool $has = false ): void {
         $this->pointer = $key;
 
@@ -38,6 +41,11 @@ class ExceptionValidator {
         }
     }
 
+    /**
+     * Verifica se a chave é uma string ou int.
+     *
+     * @throws Exception
+     */
     private function isValidKey(): void {
         if ( !is_string( $this->pointer ) && !is_int( $this->pointer ) ) {
             $type = get_debug_type( $this->pointer );
@@ -49,6 +57,11 @@ class ExceptionValidator {
         }
     }
 
+    /**
+     * Verifica se a chave já foi usada.
+     *
+     * @throws Exception
+     */
     private function hasKey(): void {
         if ( isset( $this->data[$this->pointer] ) ) {
             $key = $this->pointer;
@@ -61,6 +74,11 @@ class ExceptionValidator {
         }
     }
 
+    /**
+     * Verifica se a chave existe.
+     *
+     * @throws Exception
+     */
     private function hasNotKey(): void {
         if ( !isset( $this->data[$this->pointer] ) ) {
             $key = $this->pointer;

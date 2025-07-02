@@ -4,6 +4,9 @@ declare(strict_types = 1);
 
 namespace KeilielOliveira\Exception;
 
+/**
+ * Defini os codigos de erros internos.
+ */
 enum ExceptionCodes: int {
     case UNKNOW_INTERNAL_ERROR = 0;
     case PROPERTY_ALREADY_DEFINED = 1;
