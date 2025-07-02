@@ -1,0 +1,25 @@
+{
+    "name": "keilieloliveira/exception",
+    "description": "Uma classe de exceções para facilitar a geração de mensagens descritivas de erros.",
+    "type": "library",
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^3.76",
+        "phpstan/phpstan": "*"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "KeilielOliveira\\Exception\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Keiliel Oliveira",
+            "email": "keilieloliveira.2004@gmail.com"
+        }
+    ],
+    "scripts": {
+        "cs-fix": "set PHP_CS_FIXER_IGNORE_ENV=1 && .\\vendor\\bin\\php-cs-fixer fix",
+        "phpstan-analyse": "./vendor/bin/phpstan analyse"
+    }
+}
