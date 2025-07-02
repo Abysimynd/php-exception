@@ -4,7 +4,8 @@
     "type": "library",
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.76",
-        "phpstan/phpstan": "*"
+        "phpstan/phpstan": "*",
+        "phpunit/phpunit": "^12.2"
     },
     "license": "MIT",
     "autoload": {
@@ -20,6 +21,7 @@
     ],
     "scripts": {
         "cs-fix": "set PHP_CS_FIXER_IGNORE_ENV=1 && .\\vendor\\bin\\php-cs-fixer fix",
-        "phpstan-analyse": "./vendor/bin/phpstan analyse"
+        "phpstan-analyse": "./vendor/bin/phpstan analyse",
+        "tests": "php ./vendor/bin/phpunit --colors=always"
     }
 }

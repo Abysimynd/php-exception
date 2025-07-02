@@ -52,12 +52,13 @@ class MessageTemplate {
     }
 
     private function hasData(): void {
-        $data = Exception::get( Config::TEMPLATE_DATA_KEY->value );
-
-        if ( null == $data ) {
+        try {
+            $data = Exception::get( Config::TEMPLATE_DATA_KEY->value );
+        } catch ( Exception $e ) {
             throw new Exception(
                 'Não foi possível recuperar os dados usados na geração da mensagem.',
-                ExceptionCodes::TEMPLATE_DATA_NOT_DEFINED->value
+                ExceptionCodes::TEMPLATE_DATA_NOT_DEFINED->value,
+                $e
             );
         }
     }
@@ -65,9 +66,11 @@ class MessageTemplate {
     private function isValidMessage(): void {
         $pattern = Config::TEMPLATE_DATA_PATTERN->value;
 
-        if ( preg_match( $pattern, $this->message ) ) {
+        if ( preg_match( $pattern, $this->message, $matches ) ) {
+            $data = str_replace( '@', '', $matches[0] );
+
             throw new Exception(
-                'Dados para geração da mensagem faltando.',
+                "Dado '{$data}' para geração da mensagem faltando.",
                 ExceptionCodes::MISSING_TEMPLATE_DATA->value
             );
         }

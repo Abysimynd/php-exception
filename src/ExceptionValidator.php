@@ -67,7 +67,7 @@ class ExceptionValidator {
 
             /** @var int|string $key */
             throw new Exception(
-                "Propriedade '\$key' não encontrada",
+                "Propriedade '{$key}' não encontrada",
                 ExceptionCodes::PROPERTY_NOT_FOUND->value
             );
         }

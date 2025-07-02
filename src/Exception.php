@@ -46,6 +46,9 @@ class Exception extends PhpException {
     }
 
     public static function get( int|string $key ): mixed {
+        $validator = new ExceptionValidator( self::$data );
+        $validator->validateKey( $key, true );
+
         return self::$data[$key];
     }
 
