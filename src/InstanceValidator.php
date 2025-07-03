@@ -8,7 +8,7 @@ class InstanceValidator {
     /**
      * Armazena todos os dados registrados.
      *
-     * @var array<string, array<int|string, mixed>>
+     * @var array<mixed>
      */
     private array $data;
     private ?string $instance;
@@ -16,7 +16,7 @@ class InstanceValidator {
     /**
      * Valida a instancia sendo usada.
      *
-     * @param array<string, array<int|string, mixed>> $data
+     * @param array<mixed> $data
      */
     public function __construct( array $data, ?string $instance ) {
         $this->data = $data;

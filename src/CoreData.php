@@ -8,7 +8,7 @@ class CoreData {
     /**
      * Armazena todos os dados.
      *
-     * @var array<string, array<int|string, mixed>>
+     * @var array<string, array<mixed>>
      */
     private static array $data = [];
 
@@ -23,14 +23,21 @@ class CoreData {
             self::validateInstance( $instance );
         }
 
-        // Se a instancia for valida.
         $data = null != $instance ? self::$data[$instance] : self::$data;
 
         if ( null != $key ) {
-            self::validateInstance( $instance );
             $pattern = CoreConfig::DATA_KEYS_PATTERN->value;
             $keys = ArrayUtils::convertStringToArray( $key, $pattern );
-            $data = ArrayUtils::findInArrayWithArrayIndex( $keys, $data );
+            $response = ArrayUtils::findInArrayWithArrayIndex( $keys, $data );
+
+            if ( !$response['result'] ) {
+                throw new \Exception(
+                    'Ocorreu um erro inesperado ao tentar recuperar dados.',
+                    ExceptionCodes::UNKNOW_CORE_ERROR->value
+                );
+            }
+
+            $data = $response['data'];
         }
 
         return $data;
@@ -38,32 +45,53 @@ class CoreData {
 
     public static function set( ?string $instance, int|string $key, mixed $value ): void {
         self::validateInstance( $instance );
+        /** @var string $instance */
         $pattern = CoreConfig::DATA_KEYS_PATTERN->value;
         $keys = ArrayUtils::convertStringToArray( $key, $pattern );
         $array = ArrayUtils::createArrayWithArrayIndex( $keys, $value );
 
-        self::$data[$instance] = array_merge_recursive( self::$data[$instance], $array );
+        // Validação extra para garantir que seja um array.
+        $instanceData = self::$data[$instance];
+        self::$data[$instance] = array_merge_recursive( $instanceData, $array );
     }
 
     public static function update( ?string $instance, int|string $key, mixed $value ): void {
         self::validateInstance( $instance );
+        /** @var string $instance */
         $pattern = CoreConfig::DATA_KEYS_PATTERN->value;
         $keys = ArrayUtils::convertStringToArray( $key, $pattern );
         $array = ArrayUtils::createArrayWithArrayIndex( $keys, $value );
 
-        self::$data[$instance] = array_replace_recursive( self::$data[$instance], $array );
+        // Validação extra para garantir que seja um array.
+        $instanceData = self::$data[$instance];
+        self::$data[$instance] = array_replace_recursive( $instanceData, $array );
     }
 
     public static function remove( ?string $instance, int|string $key ): void {
         self::validateInstance( $instance );
+        /** @var string $instance */
         $pattern = CoreConfig::DATA_KEYS_PATTERN->value;
         $keys = ArrayUtils::convertStringToArray( $key, $pattern );
 
-        /** @var array<int|string, mixed> $array */
         $array = self::get( $instance );
-        $array = ArrayUtils::unsetArrayKeyWithArrayIndex( $keys, $array );
 
-        self::$data[$instance] = $array;
+        if ( !is_array( $array ) ) {
+            throw new \Exception(
+                'Ocorreu um erro inesperado ao tentar recuperar dados.',
+                ExceptionCodes::UNKNOW_CORE_ERROR->value
+            );
+        }
+
+        $response = ArrayUtils::unsetArrayKeyWithArrayIndex( $keys, $array );
+
+        if ( !$response['result'] || !is_array( $response['data'] ) ) {
+            throw new \Exception(
+                'Ocorreu um erro inesperado ao tentar recuperar dados.',
+                ExceptionCodes::UNKNOW_CORE_ERROR->value
+            );
+        }
+
+        self::$data[$instance] = $response['data'];
     }
 
     public static function clear( ?string $instance ): void {

@@ -8,21 +8,21 @@ class CoreValidator {
     /**
      * Dados usados na validação atual.
      *
-     * @var array<int|string, mixed>
+     * @var array<mixed>
      */
     private array $data;
 
     /**
      * Summary of __construct.
      *
-     * @param array<int|string, mixed> $data
+     * @param array<mixed> $data
      */
     public function __construct( array $data ) {
         $this->data = $data;
     }
 
     public function validateInstance( ?string $instance ): void {
-        $validator = new InstanceValidator( $this->data, $instance ); // @phpstan-ignore argument.type
+        $validator = new InstanceValidator( $this->data, $instance );
         $validator->validate();
     }
 
