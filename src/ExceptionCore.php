@@ -22,17 +22,18 @@ class ExceptionCore extends \Exception {
         return new ExceptionCore( $instance, true );
     }
 
-    public static function getInstance(): string {
+    public static function getInstance(): ?string {
         return self::$instance;
     }
 
-    public static function getTempInstance(): string {
+    public static function getTempInstance(): ?string {
         return self::$tempInstance;
     }
 
     public static function set( int|string $key, mixed $value ): void {
         $instance = self::getDefinedInstance();
         CoreData::set( $instance, $key, $value );
+        self::clearTempInstance();
     }
 
     public static function update( int|string $key, mixed $value ): void {
@@ -42,21 +43,36 @@ class ExceptionCore extends \Exception {
         $validator->validateKey( $key );
 
         CoreData::update( $instance, $key, $value );
+        self::clearTempInstance();
     }
 
     public static function remove( int|string $key ): void {
         $instance = self::getDefinedInstance();
         $data = CoreData::get( $instance );
+        print_r( $data );
+        echo '<hr>';
         $validator = new CoreValidator( $data );
         $validator->validateKey( $key );
 
         CoreData::remove( $instance, $key );
+        self::clearTempInstance();
     }
 
     public static function get( null|int|string $key = null ): mixed {
         $instance = self::getDefinedInstance();
+        $data = CoreData::get( $instance, $key );
+        self::clearTempInstance();
 
-        return CoreData::get( $instance, $key );
+        return $data;
+    }
+
+    public static function clear( ?string $instance = null ): void {
+        CoreData::clear( $instance );
+    }
+
+    public static function clearCore(): void {
+        self::$instance = null;
+        self::clearTempInstance();
     }
 
     private static function createInstance( ?string $instance, bool $useTemp ): void {
@@ -67,7 +83,11 @@ class ExceptionCore extends \Exception {
         }
     }
 
-    private static function getDefinedInstance(): string {
+    private static function getDefinedInstance(): ?string {
         return self::$tempInstance ?? self::$instance;
+    }
+
+    private static function clearTempInstance(): void {
+        self::$tempInstance = null;
     }
 }

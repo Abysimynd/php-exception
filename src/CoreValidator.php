@@ -13,7 +13,7 @@ class CoreValidator {
         $this->method = $method;
     }
 
-    public function validateInstance( string $instance ): void {
+    public function validateInstance( ?string $instance ): void {
         $validator = new InstanceValidator( $this->data, $instance );
         $validator->validate();
     }

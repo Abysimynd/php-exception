@@ -8,7 +8,7 @@ class CoreData {
     private static array $data = [];
 
     public function __construct( ?string $instance ) {
-        if ( null != $instance ) {
+        if ( null != $instance && !isset( self::$data[$instance] ) ) {
             self::$data[$instance] = [];
         }
     }
@@ -31,7 +31,7 @@ class CoreData {
         return $data;
     }
 
-    public static function set( string $instance, int|string $key, mixed $value ): void {
+    public static function set( ?string $instance, int|string $key, mixed $value ): void {
         self::validateInstance( $instance );
         $pattern = CoreConfig::DATA_KEYS_PATTERN->value;
         $keys = ArrayUtils::convertStringToArray( $key, $pattern );
@@ -40,7 +40,7 @@ class CoreData {
         self::$data[$instance] = array_merge_recursive( self::$data[$instance], $array );
     }
 
-    public static function update( string $instance, int|string $key, mixed $value ): void {
+    public static function update( ?string $instance, int|string $key, mixed $value ): void {
         self::validateInstance( $instance );
         $pattern = CoreConfig::DATA_KEYS_PATTERN->value;
         $keys = ArrayUtils::convertStringToArray( $key, $pattern );
@@ -49,7 +49,7 @@ class CoreData {
         self::$data[$instance] = array_replace_recursive( self::$data[$instance], $array );
     }
 
-    public static function remove( string $instance, int|string $key ): void {
+    public static function remove( ?string $instance, int|string $key ): void {
         self::validateInstance( $instance );
         $pattern = CoreConfig::DATA_KEYS_PATTERN->value;
         $keys = ArrayUtils::convertStringToArray( $key, $pattern );
@@ -59,7 +59,18 @@ class CoreData {
         self::$data[$instance] = $array;
     }
 
-    private static function validateInstance( string $instance ): void {
+    public static function clear( ?string $instance ): void {
+        if ( null != $instance ) {
+            self::validateInstance( $instance );
+            self::$data[$instance] = [];
+
+            return;
+        }
+
+        self::$data = [];
+    }
+
+    private static function validateInstance( ?string $instance ): void {
         $validator = new CoreValidator( self::$data );
         $validator->validateInstance( $instance );
     }

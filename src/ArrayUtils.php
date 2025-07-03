@@ -14,6 +14,10 @@ class ArrayUtils {
     public static function hasArrayIndexInArray( array $keys, array $array ): bool {
         $result = false;
 
+        if ( empty( $keys ) ) {
+            return true;
+        }
+
         if ( !empty( $array ) ) {
             $key = array_shift( $keys );
 
