@@ -5,8 +5,18 @@ declare(strict_types = 1);
 namespace KeilielOliveira\Exception;
 
 class KeyValidator {
+    /**
+     * Dados da instancia sendo usada.
+     *
+     * @var array<int|string, mixed>
+     */
     private array $data;
 
+    /**
+     * Valida a chave sendo usada.
+     *
+     * @param array<int|string, mixed> $data
+     */
     public function __construct( array $data ) {
         $this->data = $data;
     }

@@ -5,12 +5,26 @@ declare(strict_types = 1);
 namespace KeilielOliveira\Exception;
 
 class ArrayUtils {
-    public static function convertStringToArray( string $string, string $pattern ): array {
+    /**
+     * Converte uma string no formato a->b->c para um array.
+     *
+     * @param string $string
+     *
+     * @return array<int|string, string>
+     */
+    public static function convertStringToArray( int|string $string, string $pattern ): array {
+        $string = (string) $string;
         preg_match_all( $pattern, $string, $matches );
 
         return $matches[1];
     }
 
+    /**
+     * Procura recursivamente as chaves ($keys) dentro do array passado ($array).
+     *
+     * @param array<int|string, string> $keys
+     * @param array<int|string, mixed>  $array
+     */
     public static function hasArrayIndexInArray( array $keys, array $array ): bool {
         $result = false;
 
@@ -37,6 +51,13 @@ class ArrayUtils {
         return $result;
     }
 
+    /**
+     * Cria de forma recursiva um array com as chaves ($keys) e adiciona o valor ($value) no ultimo indice.
+     *
+     * @param array<int|string, string> $keys
+     *
+     * @return array<int|string, mixed>
+     */
     public static function createArrayWithArrayIndex( array $keys, mixed $value ): array {
         $result = [];
 
@@ -54,10 +75,21 @@ class ArrayUtils {
         return $result;
     }
 
+    /**
+     * Procura recursivamente as chaves ($keys) dentro do array passado ($array) e deleta a ultima chave.
+     *
+     * @param array<int|string, string> $keys
+     * @param array<int|string, mixed>  $array
+     *
+     * @return array<int|string, mixed>
+     */
     public static function unsetArrayKeyWithArrayIndex( array $keys, array $array ): array {
         if ( count( $keys ) > 1 ) {
             $key = array_shift( $keys );
-            $array[$key] = self::unsetArrayKeyWithArrayIndex( $keys, $array[$key] );
+
+            /** @var array<int|string, mixed> $newArray */
+            $newArray = $array[$key];
+            $array[$key] = self::unsetArrayKeyWithArrayIndex( $keys, $newArray );
 
             return $array;
         }
@@ -68,15 +100,23 @@ class ArrayUtils {
         return $array;
     }
 
+    /**
+     * Procura recursivamente as chaves ($keys) dentro do array passado ($array) e retorna o valor da ultima chave.
+     *
+     * @param array<int|string, string> $keys
+     * @param array<int|string, mixed>  $array
+     */
     public static function findInArrayWithArrayIndex( array $keys, array $array ): mixed {
         if ( !empty( $keys ) ) {
             $key = array_shift( $keys );
 
+            /** @var array<int|string, mixed> $array */
             $array = $array[$key];
 
             if ( empty( $keys ) ) {
                 return $array;
             }
+
             $array = self::findInArrayWithArrayIndex( $keys, $array );
         }
 

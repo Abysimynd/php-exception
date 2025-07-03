@@ -38,8 +38,10 @@ class ExceptionCore extends \Exception {
 
     public static function update( int|string $key, mixed $value ): void {
         $instance = self::getDefinedInstance();
+
+        /** @var array<int|string, mixed> */
         $data = CoreData::get( $instance );
-        $validator = new CoreValidator( $data, __METHOD__ );
+        $validator = new CoreValidator( $data );
         $validator->validateKey( $key );
 
         CoreData::update( $instance, $key, $value );
@@ -48,9 +50,9 @@ class ExceptionCore extends \Exception {
 
     public static function remove( int|string $key ): void {
         $instance = self::getDefinedInstance();
+
+        /** @var array<int|string, mixed> */
         $data = CoreData::get( $instance );
-        print_r( $data );
-        echo '<hr>';
         $validator = new CoreValidator( $data );
         $validator->validateKey( $key );
 

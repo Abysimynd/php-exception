@@ -5,9 +5,19 @@ declare(strict_types = 1);
 namespace KeilielOliveira\Exception;
 
 class InstanceValidator {
+    /**
+     * Armazena todos os dados registrados.
+     *
+     * @var array<string, array<int|string, mixed>>
+     */
     private array $data;
     private ?string $instance;
 
+    /**
+     * Valida a instancia sendo usada.
+     *
+     * @param array<string, array<int|string, mixed>> $data
+     */
     public function __construct( array $data, ?string $instance ) {
         $this->data = $data;
         $this->instance = $instance;

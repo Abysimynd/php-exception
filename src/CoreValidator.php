@@ -5,16 +5,24 @@ declare(strict_types = 1);
 namespace KeilielOliveira\Exception;
 
 class CoreValidator {
+    /**
+     * Dados usados na validação atual.
+     *
+     * @var array<int|string, mixed>
+     */
     private array $data;
-    private ?string $method;
 
-    public function __construct( array $data, ?string $method = null ) {
+    /**
+     * Summary of __construct.
+     *
+     * @param array<int|string, mixed> $data
+     */
+    public function __construct( array $data ) {
         $this->data = $data;
-        $this->method = $method;
     }
 
     public function validateInstance( ?string $instance ): void {
-        $validator = new InstanceValidator( $this->data, $instance );
+        $validator = new InstanceValidator( $this->data, $instance ); // @phpstan-ignore argument.type
         $validator->validate();
     }
 

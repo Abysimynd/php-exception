@@ -5,6 +5,11 @@ declare(strict_types = 1);
 namespace KeilielOliveira\Exception;
 
 class CoreData {
+    /**
+     * Armazena todos os dados.
+     *
+     * @var array<string, array<int|string, mixed>>
+     */
     private static array $data = [];
 
     public function __construct( ?string $instance ) {
@@ -53,6 +58,8 @@ class CoreData {
         self::validateInstance( $instance );
         $pattern = CoreConfig::DATA_KEYS_PATTERN->value;
         $keys = ArrayUtils::convertStringToArray( $key, $pattern );
+
+        /** @var array<int|string, mixed> $array */
         $array = self::get( $instance );
         $array = ArrayUtils::unsetArrayKeyWithArrayIndex( $keys, $array );
 
