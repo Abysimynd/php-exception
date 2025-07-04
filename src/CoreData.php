@@ -97,7 +97,9 @@ class CoreData {
             return;
         }
 
-        self::$data = [];
+        foreach ( self::$data as $instance => $value ) {
+            self::$data[$instance] = [];
+        }
     }
 
     private static function validateInstance( ?string $instance ): void {
