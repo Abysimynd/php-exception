@@ -26,8 +26,7 @@ class CoreData {
         $data = null != $instance ? self::$data[$instance] : self::$data;
 
         if ( null != $key ) {
-            $pattern = CoreConfig::DATA_KEYS_PATTERN->value;
-            $keys = ArrayUtils::convertStringToArray( $key, $pattern );
+            $keys = self::getKeys( $key );
             $response = ArrayUtils::findInArrayWithArrayIndex( $keys, $data );
 
             if ( !$response['result'] ) {
@@ -46,8 +45,7 @@ class CoreData {
     public static function set( ?string $instance, int|string $key, mixed $value ): void {
         self::validateInstance( $instance );
         /** @var string $instance */
-        $pattern = CoreConfig::DATA_KEYS_PATTERN->value;
-        $keys = ArrayUtils::convertStringToArray( $key, $pattern );
+        $keys = self::getKeys( $key );
         $array = ArrayUtils::createArrayWithArrayIndex( $keys, $value );
 
         // Validação extra para garantir que seja um array.
@@ -58,8 +56,7 @@ class CoreData {
     public static function update( ?string $instance, int|string $key, mixed $value ): void {
         self::validateInstance( $instance );
         /** @var string $instance */
-        $pattern = CoreConfig::DATA_KEYS_PATTERN->value;
-        $keys = ArrayUtils::convertStringToArray( $key, $pattern );
+        $keys = self::getKeys( $key );
         $array = ArrayUtils::createArrayWithArrayIndex( $keys, $value );
 
         // Validação extra para garantir que seja um array.
@@ -70,9 +67,7 @@ class CoreData {
     public static function remove( ?string $instance, int|string $key ): void {
         self::validateInstance( $instance );
         /** @var string $instance */
-        $pattern = CoreConfig::DATA_KEYS_PATTERN->value;
-        $keys = ArrayUtils::convertStringToArray( $key, $pattern );
-
+        $keys = self::getKeys( $key );
         $array = self::get( $instance );
 
         if ( !is_array( $array ) ) {
@@ -108,5 +103,16 @@ class CoreData {
     private static function validateInstance( ?string $instance ): void {
         $validator = new CoreValidator( self::$data );
         $validator->validateInstance( $instance );
+    }
+
+    /**
+     * Summary of getKeys.
+     *
+     * @return array<int, string>
+     */
+    private static function getKeys( int|string $key ): array {
+        $pattern = CoreConfig::DATA_KEYS_PATTERN->value;
+
+        return ArrayUtils::convertStringToArray( $key, $pattern );
     }
 }
