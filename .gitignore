@@ -1,0 +1,7 @@
+# User
+index.php
+dependencies/
+
+
+# Composer
+/vendor/

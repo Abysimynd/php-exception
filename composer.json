@@ -1,0 +1,23 @@
+{
+    "name": "keilieloliveira/exception",
+    "description": "Uma biblioteca php para facilitar a geração e lançamento de exceções.",
+    "type": "library",
+    "require-dev": {
+        "phpstan/phpstan": "^2.1",
+        "phpunit/phpunit": "^12.2",
+        "friendsofphp/php-cs-fixer": "^3.84"
+    },
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "KeilielOliveira\\Exception\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Abysimynd",
+            "email": "keilieloliveira.2004@gmail.com"
+        }
+    ],
+    "require": {}
+}

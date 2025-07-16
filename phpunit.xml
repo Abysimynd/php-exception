@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit
+    bootstrap="tests/bootstrap.php"
+    cacheDirectory="dependencies"
+    colors="true"
+    testdox="true"
+>
+
+    <testsuites>
+        <testsuite name="core">
+            <directory>tests/core</directory>
+        </testsuite>
+        <testsuite name="config">
+            <directory>tests/config</directory>
+        </testsuite>
+        <testsuite name="instance">
+            <directory>tests/instance</directory>
+        </testsuite>
+        <testsuite name="helpers">
+            <directory>tests/helpers</directory>
+        </testsuite>
+    </testsuites>
+
+</phpunit>
