@@ -19,5 +19,8 @@
             "email": "keilieloliveira.2004@gmail.com"
         }
     ],
-    "require": {}
+    "require": {},
+    "scripts": {
+        "cs-fix": "./vendor/bin/php-cs-fixer fix"
+    }
 }
