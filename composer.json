@@ -10,7 +10,8 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "KeilielOliveira\\Exception\\": "src/"
+            "KeilielOliveira\\Exception\\": "src/",
+            "Dependencies\\TestsContent\\Class\\": "dependencies/tests_content/class/"
         }
     },
     "authors": [

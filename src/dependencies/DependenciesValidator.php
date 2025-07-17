@@ -11,6 +11,7 @@ class DependenciesValidator {
     public function __construct( string $dependecie, mixed ...$args ) {
         $this->dependecie = $dependecie;
         $this->args = $args;
+        $this->validateDependencie();
     }
 
     private function validateDependencie(): void {
@@ -30,7 +31,7 @@ class DependenciesValidator {
     private function classExists(): void {
         if ( !class_exists( $this->dependecie ) ) {
             throw new InvalidDependencieException(
-                sprintf( 'Não foi possível encontrar a classe %s', $this->dependecie )
+                sprintf( 'Não foi possível encontrar a classe %s.', $this->dependecie )
             );
         }
     }
