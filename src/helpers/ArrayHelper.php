@@ -62,6 +62,7 @@ class ArrayHelper {
         $key = array_shift( $path );
 
         if ( !empty( $path ) ) {
+            /** @var array<mixed> $newArray */
             $newArray = $array[$key];
             $array[$key] = self::updatePathInArray( $path, $newArray, $value );
 
@@ -85,6 +86,7 @@ class ArrayHelper {
         $key = array_shift( $path );
 
         if ( !empty( $path ) ) {
+            /** @var array<mixed> $newArray */
             $newArray = $array[$key];
             $array[$key] = self::removePathInArray( $path, $newArray );
 
