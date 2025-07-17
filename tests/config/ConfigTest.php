@@ -40,7 +40,7 @@ final class ConfigTest extends TestCase {
     public function testIsValidatingIfConfigExists(): void {
         $name = 'invalid_config';
         $message = "A configuração '{$name}' não existe.";
-        
+
         $this->expectException( InvalidConfigException::class );
         $this->expectExceptionMessage( $message );
 

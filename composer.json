@@ -22,6 +22,8 @@
     "require": {},
     "scripts": {
         "cs-fix": "./vendor/bin/php-cs-fixer fix",
-        "test": "./vendor/bin/phpunit --colors=always --testsuite"
+        "phpstan": "./vendor/bin/phpstan analyse",
+        "test": "./vendor/bin/phpunit --colors=always --testsuite",
+        "tests": "./vendor/bin/phpunit --colors=always"
     }
 }

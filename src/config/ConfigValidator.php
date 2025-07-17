@@ -5,8 +5,14 @@ declare(strict_types = 1);
 namespace KeilielOliveira\Exception\Config;
 
 class ConfigValidator {
+    /** @var array<mixed> Configuraões sendo validadas */
     private array $config;
 
+    /**
+     * Valida as configurações passadas.
+     *
+     * @param array<mixed> $config
+     */
     public function __construct( array $config ) {
         $this->config = $config;
         $this->validate();
@@ -37,10 +43,12 @@ class ConfigValidator {
         foreach ( $value as $key => $type ) {
             $type = get_debug_type( $type );
 
-            if ( isset( $validTypes['array'] ) ) {
+            if ( isset( $validTypes['array'] ) && is_array( $validTypes['array'] ) ) {
                 $isArray = true;
                 $validTypes = $validTypes['array'];
             }
+
+            /** @var array<string> $validTypes */
             $validTypes = is_array( $validTypes ) ? $validTypes : [$validTypes];
 
             if ( !in_array( $type, $validTypes ) ) {

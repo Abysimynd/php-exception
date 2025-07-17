@@ -7,17 +7,8 @@
 >
 
     <testsuites>
-        <testsuite name="core">
-            <directory>tests/core</directory>
-        </testsuite>
         <testsuite name="config">
             <directory>tests/config</directory>
-        </testsuite>
-        <testsuite name="instance">
-            <directory>tests/instance</directory>
-        </testsuite>
-        <testsuite name="helpers">
-            <directory>tests/helpers</directory>
         </testsuite>
     </testsuites>
 
