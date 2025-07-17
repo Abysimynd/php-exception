@@ -13,6 +13,9 @@
         <testsuite name="dependencies">
             <directory>tests/dependencies</directory>
         </testsuite>
+        <testsuite name="helpers">
+            <directory>tests/helpers</directory>
+        </testsuite>
     </testsuites>
 
 </phpunit>
