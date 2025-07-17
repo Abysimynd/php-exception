@@ -32,7 +32,7 @@ class InstanceControl {
         $instance = $this->getDefinedInstance();
 
         if ( null == $instance ) {
-            throw new \InstanceException(
+            throw new InstanceException(
                 'Não há uma instancia definida.'
             );
         }

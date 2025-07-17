@@ -17,10 +17,10 @@ class InstanceValidator {
     }
 
     private function isValidInstanceSyntax(): void {
-        $pattern = '/[^\{\}\(\)\[\]]+/';
+        $pattern = '/[\{\}\(\)\[\]]/';
 
-        if ( !preg_match( $pattern, $this->instance ) ) {
-            throw new \InstanceException(
+        if ( preg_match( $pattern, $this->instance ) ) {
+            throw new InstanceException(
                 sprintf(
                     'A instancia %s não possui uma sintaxe valida.',
                     $this->instance
