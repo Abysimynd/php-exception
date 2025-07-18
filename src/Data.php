@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace KeilielOliveira\Exception;
 
+use Exception;
 use KeilielOliveira\Exception\Config\Config;
 use KeilielOliveira\Exception\Data\DataControl;
 use KeilielOliveira\Exception\Dependencies\DependenciesContainer;
@@ -32,6 +33,7 @@ class Data {
      * @param array<mixed> $config
      */
     public static function config( array $config ): void {
+        new Data();
         self::$container->getDependencie( Config::class )->setConfig( $config );
     }
 
@@ -41,6 +43,7 @@ class Data {
      * Para realizar uma operação uma instancia deve estar definida ou uma exceção será lançada.
      */
     public static function use( string $instance ): void {
+        new Data();
         self::$container->getDependencie( InstanceControl::class )->setInstance( $instance );
     }
 
@@ -51,17 +54,19 @@ class Data {
      * Para realizar uma operação uma instancia deve estar definida ou uma exceção será lançada.
      */
     public static function in( string $instance ): self {
+        $data = new Data();
         self::$container->getDependencie( InstanceControl::class )
             ->setInstance( $instance, true )
         ;
 
-        return new Data();
+        return $data;
     }
 
     /**
      * Retorna a instancia atual ou null se não houver uma.
      */
     public static function getInstance(): ?string {
+        self::hasContainer();
         return self::$container->getDependencie( InstanceControl::class )->getInstance();
     }
 
@@ -69,6 +74,7 @@ class Data {
      * Retorna a instancia temporaria atual ou null se não houver uma.
      */
     public static function getTempInstance(): ?string {
+        self::hasContainer();
         return self::$container->getDependencie( InstanceControl::class )->getInstance( true );
     }
 
@@ -78,6 +84,7 @@ class Data {
      * A instancia temporaria sempre tera prioridade se definida.
      */
     public static function getDefinedInstance(): ?string {
+        self::hasContainer();
         return self::$container->getDependencie( InstanceControl::class )->getDefinedInstance();
     }
 
@@ -85,6 +92,7 @@ class Data {
      * Salva o valor na chave dentro da instancia atual.
      */
     public static function set( int|string $key, mixed $value ): void {
+        self::hasContainer();
         self::$container->getDependencie( DataControl::class )->setData( $key, $value );
     }
 
@@ -94,6 +102,7 @@ class Data {
      * Caso a chave não sejá encontrada uma exceção será lançada.
      */
     public static function update( int|string $key, mixed $value ): void {
+        self::hasContainer();
         self::$container->getDependencie( DataControl::class )->updateData( $key, $value );
     }
 
@@ -103,20 +112,23 @@ class Data {
      * Caso a chave não sejá encontrada uma exceção será lançada.
      */
     public static function remove( int|string $key ): void {
+        self::hasContainer();
         self::$container->getDependencie( DataControl::class )->removeData( $key );
     }
 
     /**
      * Retorna o valor da chave na instancia atual ou todos os dados da instancia se a chave for null.
      */
-    public static function get( null|int|string $key = null ): void {
-        self::$container->getDependencie( DataControl::class )->getData( $key );
+    public static function get( null|int|string $key = null ): mixed {
+        self::hasContainer();
+        return self::$container->getDependencie( DataControl::class )->getData( $key );
     }
 
     /**
      * Limpa todos os dados da instancia atual.
      */
     public static function clearInstance(): void {
+        self::hasContainer();
         self::$container->getDependencie( DataControl::class )->clearData();
     }
 
@@ -124,6 +136,13 @@ class Data {
      * Limpa todos os dados de todas as instancias.
      */
     public static function clearData(): void {
+        self::hasContainer();
         self::$container->getDependencie( DataControl::class )->clearData( true );
+    }
+
+    private static function hasContainer(): void {
+        if(!isset($container)) {
+            new Data();
+        }
     }
 }
