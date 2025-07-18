@@ -99,10 +99,10 @@ class ArrayHelper {
     }
 
     /**
-     * Retorna o valor do caminho no array
+     * Retorna o valor do caminho no array.
+     *
      * @param array<int|string> $path
-     * @param array<mixed> $array
-     * @return mixed
+     * @param array<mixed>      $array
      */
     public static function getPathValueInArray( array $path, array $array ): mixed {
         $value = $array;

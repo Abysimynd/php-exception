@@ -24,10 +24,11 @@ class DependenciesContainer {
      * Retorna a instancia da classe passada se existir.
      *
      * @template T of object
+     *
      * @param class-string<T> $class
-     * 
+     *
      * @return T
-     * 
+     *
      * @throws InvalidDependencieException
      */
     public function getDependencie( string $class ): object {
@@ -37,8 +38,14 @@ class DependenciesContainer {
             );
         }
 
-        /** @var T $object */
         $object = $this->dependencies[$class];
+
+        if ( !$object instanceof $class ) {
+            throw new InvalidDependencieException(
+                "A classe {$class} não possui uma dependencia valida."
+            );
+        }
+
         return $object;
     }
 }

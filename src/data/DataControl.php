@@ -55,14 +55,12 @@ class DataControl {
 
     /**
      * Retorna o valor da chave na instancia atual.
-     *
-     * @return mixed
      */
     public function getData( null|int|string $key = null ): mixed {
         $instance = $this->getInstance();
         [$keys, $data] = $this->prepareArgs( $key, $instance );
 
-        if ( empty($keys) ) {
+        if ( empty( $keys ) ) {
             return $data;
         }
 
@@ -97,7 +95,7 @@ class DataControl {
     /**
      * Prepara os argumentos usados nas operações.
      *
-     * @return array{0: array<string|int>, 1: array<mixed>}
+     * @return array{0: array<int|string>, 1: array<mixed>}
      */
     private function prepareArgs( null|int|string $key, string $instance ): array {
         $this->setInstanceInData( $instance );
@@ -127,12 +125,11 @@ class DataControl {
     private function getKeys( string $key ): array {
         $config = $this->container->getDependencie( Config::class );
         $separators = $config->getConfig( 'array_index_separator' );
-        $separators = is_array($separators) ? $separators : [$separators];
+        $separators = is_array( $separators ) ? $separators : [$separators];
         $keys = [];
 
         foreach ( $separators as $i => $separator ) {
             /** @var non-empty-string $separator */
-
             if ( empty( $keys ) ) {
                 $keys = explode( $separator, $key );
 
@@ -167,9 +164,9 @@ class DataControl {
     /**
      * Valida se o caminho existe dentro do array.
      *
-     * @param array<string|int> $keys
-     * @param array<mixed> $data
-     * 
+     * @param array<int|string> $keys
+     * @param array<mixed>      $data
+     *
      * @throws DataException
      */
     private function hasPathInArrayValidation( array $keys, array $data, string $instance ): void {
