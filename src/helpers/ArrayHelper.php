@@ -97,4 +97,21 @@ class ArrayHelper {
 
         return $array;
     }
+
+    /**
+     * Retorna o valor do caminho no array
+     * @param array<int|string> $path
+     * @param array<mixed> $array
+     * @return mixed
+     */
+    public static function getPathValueInArray( array $path, array $array ): mixed {
+        $value = $array;
+
+        foreach ( $path as $i => $key ) {
+            /** @var array<mixed> */
+            $value = $value[$key];
+        }
+
+        return $value;
+    }
 }

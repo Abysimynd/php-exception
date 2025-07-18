@@ -19,6 +19,9 @@
         <testsuite name="instances">
             <directory>tests/instances</directory>
         </testsuite>
+        <testsuite name="data">
+            <directory>tests/data</directory>
+        </testsuite>
     </testsuites>
 
 </phpunit>

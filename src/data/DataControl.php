@@ -11,7 +11,7 @@ use KeilielOliveira\Exception\Instances\InstanceControl;
 
 class DataControl {
     /** @var DependenciesContainer Container de classes */
-    private DependenciesContainer $container;
+    private DependenciesContainer $container; // @phpstan-ignore property.onlyRead
 
     /** @var array<string, array<mixed>> Armazena todos os dados */
     private array $data;
@@ -56,15 +56,19 @@ class DataControl {
     /**
      * Retorna o valor da chave na instancia atual.
      *
-     * @return array
+     * @return mixed
      */
-    public function getData( int|string $key ): mixed {
+    public function getData( null|int|string $key = null ): mixed {
         $instance = $this->getInstance();
         [$keys, $data] = $this->prepareArgs( $key, $instance );
 
+        if ( empty($keys) ) {
+            return $data;
+        }
+
         $this->hasPathInArrayValidation( $keys, $data, $instance );
 
-        return ArrayHelper::removePathInArray( $keys, $data );
+        return ArrayHelper::getPathValueInArray( $keys, $data );
     }
 
     /**
@@ -93,12 +97,12 @@ class DataControl {
     /**
      * Prepara os argumentos usados nas operações.
      *
-     * @return array<array<mixed>>
+     * @return array{0: array<string|int>, 1: array<mixed>}
      */
-    private function prepareArgs( int|string $key, string $instance ): array {
+    private function prepareArgs( null|int|string $key, string $instance ): array {
         $this->setInstanceInData( $instance );
 
-        $keys = $this->getKeys( (string) $key );
+        $keys = null == $key ? [] : $this->getKeys( (string) $key );
         $data = $this->data[$instance];
 
         return [$keys, $data];
@@ -116,15 +120,19 @@ class DataControl {
     /**
      * Recupera as chaves que serão usadas nas operações.
      *
-     * @throws DataException
      * @return array<string>
+     *
+     * @throws DataException
      */
     private function getKeys( string $key ): array {
         $config = $this->container->getDependencie( Config::class );
         $separators = $config->getConfig( 'array_index_separator' );
+        $separators = is_array($separators) ? $separators : [$separators];
         $keys = [];
 
         foreach ( $separators as $i => $separator ) {
+            /** @var non-empty-string $separator */
+
             if ( empty( $keys ) ) {
                 $keys = explode( $separator, $key );
 
@@ -133,12 +141,13 @@ class DataControl {
 
             $newKeys = [];
 
-            foreach ( $keys as $key => $value ) {
+            foreach ( $keys as $i => $value ) {
                 $newKeys = array_merge( $newKeys, explode( $separator, $value ) );
             }
             $keys = $newKeys;
         }
 
+        /** @var int $maxIndex */
         $maxIndex = $config->getConfig( 'max_array_index' );
 
         if ( count( $keys ) - 1 > $maxIndex ) {
@@ -158,6 +167,9 @@ class DataControl {
     /**
      * Valida se o caminho existe dentro do array.
      *
+     * @param array<string|int> $keys
+     * @param array<mixed> $data
+     * 
      * @throws DataException
      */
     private function hasPathInArrayValidation( array $keys, array $data, string $instance ): void {

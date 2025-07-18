@@ -5,7 +5,7 @@ declare(strict_types = 1);
 namespace KeilielOliveira\Exception\Config;
 
 /**
- * @phpstan-type PrimitiveConfigType string|int|float|bool|null
+ * @phpstan-type PrimitiveConfigType non-empty-string|int|float|bool|null
  * @phpstan-type ConfigType array<string, PrimitiveConfigType|array<PrimitiveConfigType>>
  */
 class DefaultConfig {
