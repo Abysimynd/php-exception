@@ -88,6 +88,7 @@ class Data {
      */
     public function set( int|string $key, mixed $value ): void {
         $this->dataControl->setData( $key, $value );
+        $this->instanceControl->clearTempInstance();
     }
 
     /**
@@ -97,6 +98,7 @@ class Data {
      */
     public function update( int|string $key, mixed $value ): void {
         $this->dataControl->updateData( $key, $value );
+        $this->instanceControl->clearTempInstance();
     }
 
     /**
@@ -106,13 +108,16 @@ class Data {
      */
     public function remove( int|string $key ): void {
         $this->dataControl->removeData( $key );
+        $this->instanceControl->clearTempInstance();
     }
 
     /**
      * Retorna o valor da chave na instancia atual ou todos os dados da instancia se a chave for null.
      */
     public function get( null|int|string $key = null ): mixed {
-        return $this->dataControl->getData( $key );
+        $data = $this->dataControl->getData( $key );
+        $this->instanceControl->clearTempInstance();
+        return $data;
     }
 
     /**
@@ -120,6 +125,7 @@ class Data {
      */
     public function clearInstance(): void {
         $this->dataControl->clearData();
+        $this->instanceControl->clearTempInstance();
     }
 
     /**
