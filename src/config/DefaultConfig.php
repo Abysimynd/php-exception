@@ -5,11 +5,17 @@ declare(strict_types = 1);
 namespace KeilielOliveira\Exception\Config;
 
 /**
- * @phpstan-type PrimitiveConfigType non-empty-string|int|float|bool|null
- * @phpstan-type ConfigType array<string, PrimitiveConfigType|array<PrimitiveConfigType>>
+ * Inicia as configurações com seus valores padrão e auxilia na validação das configurações alteradas.
+ *
+ * Tipos para o phpstan.
+ *
+ * @phpstan-type ConfigMap array{
+ *      max_array_index: int,
+ *      array_index_separator: non-empty-string|array<non-empty-string>
+ * }
  */
 class DefaultConfig {
-    /** @var ConfigType Configurações padrão */
+    /** @var ConfigMap Armazena as configurações padrão */
     private array $default;
 
     public function __construct() {
@@ -17,17 +23,13 @@ class DefaultConfig {
     }
 
     /**
-     * Retorna as configurações padrão.
-     *
-     * @return ConfigType
+     * @return ConfigMap
      */
     public function getDefaultConfig(): array {
         return $this->default;
     }
 
     /**
-     * Retorna os nomes das configurações existentes.
-     *
      * @return array<string>
      */
     public function getDefaultConfigNames(): array {
@@ -35,12 +37,9 @@ class DefaultConfig {
     }
 
     /**
-     * Retorna os tipos de valores aceitos por cada configuração existente.
+     * Retorna os tipos de valores aceitos por cada configuração.
      *
-     * Ignorando o erro do phpstan porque o metodo é recursivo e não achei uma forma viavel de definir o tipo de
-     * retorno de forma que o phpstan entenda.
-     *
-     * @return array<string, array{array: array<string>}|string>
+     * @return array<string, array<string>|string>
      */
     public function getDefaultConfigValuesType(): array {
         return $this->prepareDefaultValuesTypes( $this->default );
@@ -56,38 +55,40 @@ class DefaultConfig {
     /**
      * Recupera os tipos de valores aceitos por todas as configurações existentes.
      *
-     * @param array<PrimitiveConfigType>|ConfigType $config
+     * @param ConfigMap $config
      *
-     * Ignorando o erro do phpstan porque o metodo é recursivo e não achei uma forma viavel de definir o tipo de
-     * retorno de forma que o phpstan entenda
-     *
-     * @return array<string, array{array: array<string>}|string>
+     * @return array<string, array<string>|string>
      */
-    private function prepareDefaultValuesTypes( array $config, int $max = 2 ): array {
-        $valuesType = [];
-        --$max;
+    private function prepareDefaultValuesTypes( array $config ): array {
+        $valueTypes = [];
 
         foreach ( $config as $name => $value ) {
-            if ( !is_array( $value ) ) {
-                $type = get_debug_type( $value );
-
-                if ( !in_array( $type, $valuesType ) ) {
-                    $valuesType[$name] = $type;
-                }
-
-                continue;
-            }
-
-            if ( 0 == $max ) {
-                throw new InvalidConfigException(
-                    'Ocorreu um erro inesperado ao preparar as configurações.'
-                );
-            }
-
-            $types = $this->prepareDefaultValuesTypes( $value, $max );
-            $valuesType[$name] = ['array' => $types];
+            $valueTypes[$name] = $this->getConfigValueTypes( $value );
         }
 
-        return $valuesType; // @phpstan-ignore return.type
+        return $valueTypes;
+    }
+
+    /**
+     * @return string|string[]
+     */
+    private function getConfigValueTypes( mixed $configValue ): array|string {
+        if ( is_array( $configValue ) ) {
+            $types = [];
+
+            foreach ( $configValue as $key => $value ) {
+                $type = get_debug_type( $value );
+
+                if ( in_array( $type, $types ) ) {
+                    continue;
+                }
+
+                $types[] = $type;
+            }
+
+            return $types;
+        }
+
+        return get_debug_type( $configValue );
     }
 }

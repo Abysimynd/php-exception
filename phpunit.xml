@@ -10,9 +10,6 @@
         <testsuite name="config">
             <directory>tests/config</directory>
         </testsuite>
-        <testsuite name="dependencies">
-            <directory>tests/dependencies</directory>
-        </testsuite>
         <testsuite name="helpers">
             <directory>tests/helpers</directory>
         </testsuite>

@@ -4,6 +4,9 @@ declare(strict_types = 1);
 
 namespace KeilielOliveira\Exception\Instances;
 
+/**
+ * Controla as instancias (chaves) onde os dados são armazenados.
+ */
 class InstanceControl {
     private ?string $instance = null;
     private ?string $tempInstance = null;
@@ -38,5 +41,9 @@ class InstanceControl {
         }
 
         return $instance;
+    }
+
+    public function clearTempInstance(): void {
+        $this->tempInstance = null;
     }
 }

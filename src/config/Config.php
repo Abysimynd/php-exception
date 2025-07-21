@@ -5,15 +5,21 @@ declare(strict_types = 1);
 namespace KeilielOliveira\Exception\Config;
 
 /**
- * @phpstan-type PrimitiveConfigType non-empty-string|int|float|bool|null
- * @phpstan-type ConfigType array<string, PrimitiveConfigType|array<PrimitiveConfigType>>
+ * Controla as configurações de execução.
+ *
+ * Tipos para o phpstan.
+ *
+ * @phpstan-type ConfigMap array{
+ *      max_array_index: int,
+ *      array_index_separator: non-empty-string|array<non-empty-string>
+ * }
  */
 class Config {
-    /** @var ConfigType Armazena todas as configurações */
+    /** @var ConfigMap Armazena todas as configurações */
     private array $config;
 
     /**
-     * Defini as configurações padrão.
+     * Recupera e defini as configurações de execução padrões.
      */
     public function __construct() {
         $default = new DefaultConfig();
@@ -21,28 +27,28 @@ class Config {
     }
 
     /**
-     * Defini as configurações customizadas.
+     * Substitui as configurações existentes pelas recebidas se as mesmas forem validas.
      *
      * @param array<mixed> $config
      */
     public function setConfig( array $config ): void {
         new ConfigValidator( $config );
-
-        /** @var ConfigType $config */
         $config = array_merge( $this->config, $config );
         $this->config = $config;
     }
 
     /**
-     * Recupera uma configuração se a mesma existir.
+     * @template TKey of string ConfigMap
      *
-     * @return array<PrimitiveConfigType>|PrimitiveConfigType
+     * @param TKey $config
      *
-     * @throws InvalidConfigException
+     * @return ConfigMap[TKey]
+     *
+     * @throws ConfigException
      */
     public function getConfig( string $config ): mixed {
         if ( !isset( $this->config[$config] ) ) {
-            throw new InvalidConfigException(
+            throw new ConfigException(
                 "A configuração '{$config}' não existe."
             );
         }
