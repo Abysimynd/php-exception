@@ -18,6 +18,7 @@ class ReservedKeysControl {
 
         $trace = $this->getTrace();
         $reservedKeys = $this->config->getReservedConfig( 'reserved_keys' );
+        /** @var string $key PHP não reconhece que a variável é uma string */
         $key = $reservedKeys[$key];
         $this->hasTrace( $trace, $index, $key );
         $response = $trace[$index][$key];

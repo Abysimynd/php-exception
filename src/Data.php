@@ -29,7 +29,10 @@ class Data {
             $this->config,
             $this->instanceControl
         );
-        $this->messageTemplate = new MessageTemplate( $this->config, $this );
+        $this->messageTemplate = new MessageTemplate(
+            $this->config,
+            $this
+        );
     }
 
     /**
