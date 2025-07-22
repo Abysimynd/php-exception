@@ -141,6 +141,9 @@ class Data {
         $this->dataControl->clearData( true );
     }
 
+    /**
+     * Cria uma mensagem com base no template passado e nos dados salvos.
+     */
     public function createMessage( string $template ): string {
         return $this->messageTemplate->createMessage( $template );
     }

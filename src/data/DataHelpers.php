@@ -99,7 +99,7 @@ class DataHelpers {
             $keys = $newKeys;
         }
 
-        $this->validateKeys( $keys, $key );
+        new KeysValidator( $this->config, $keys );
 
         return $keys;
     }
@@ -113,25 +113,5 @@ class DataHelpers {
         $separators = $this->config->getConfig( 'array_index_separator' );
 
         return is_array( $separators ) ? $separators : [$separators];
-    }
-
-    /**
-     * @param array<string> $keys
-     *
-     * @throws DataException
-     */
-    private function validateKeys( array $keys, string $key ): void {
-        $maxIndex = $this->config->getConfig( 'max_array_index' );
-
-        if ( count( $keys ) - 1 > $maxIndex ) {
-            throw new DataException(
-                sprintf(
-                    'A chave %s excedeu o máximo de indices permitidos: (max: %s, keys: %s).',
-                    $key,
-                    $maxIndex,
-                    count( $keys ) - 1
-                )
-            );
-        }
     }
 }

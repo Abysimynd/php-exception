@@ -14,6 +14,7 @@ class InstanceValidator {
 
     private function validateInstance(): void {
         $this->isValidInstanceSyntax();
+        $this->isReservedInstance();
     }
 
     private function isValidInstanceSyntax(): void {
@@ -25,6 +26,14 @@ class InstanceValidator {
                     'A instancia %s não possui uma sintaxe valida.',
                     $this->instance
                 )
+            );
+        }
+    }
+
+    private function isReservedInstance(): void {
+        if ( 'MainException' == $this->instance ) {
+            throw new InstanceException(
+                "A instancia {$this->instance} é reservada para o sistema."
             );
         }
     }
