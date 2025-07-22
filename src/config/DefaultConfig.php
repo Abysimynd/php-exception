@@ -13,13 +13,20 @@ namespace KeilielOliveira\Exception\Config;
  *      max_array_index: int,
  *      array_index_separator: non-empty-string|array<non-empty-string>
  * }
+ * @phpstan-type ReservedConfigMap array{
+ *      reserved_keys: array<non-empty-string>
+ * }
  */
 class DefaultConfig {
     /** @var ConfigMap Armazena as configurações padrão */
     private array $default;
 
+    /** @var ReservedConfigMap Armazena todas as configurações reservadas e imutáveis */
+    private array $reservedConfig;
+
     public function __construct() {
         $this->setDefault();
+        $this->setReserved();
     }
 
     /**
@@ -27,6 +34,13 @@ class DefaultConfig {
      */
     public function getDefaultConfig(): array {
         return $this->default;
+    }
+
+    /**
+     * @return ReservedConfigMap
+     */
+    public function getReservedConfig(): array {
+        return $this->reservedConfig;
     }
 
     /**
@@ -49,6 +63,14 @@ class DefaultConfig {
         $this->default = [
             'max_array_index' => 3,
             'array_index_separator' => ['.', '->', '=>'],
+        ];
+    }
+
+    private function setReserved(): void {
+        $this->reservedConfig = [
+            'reserved_keys' => [
+                '__FILE__' => 'file', '__LINE__' => 'line', '__CLASS__' => 'class', '__METHOD__' => 'function',
+            ],
         ];
     }
 

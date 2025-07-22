@@ -7,16 +7,17 @@ namespace KeilielOliveira\Exception;
 use KeilielOliveira\Exception\Config\Config;
 use KeilielOliveira\Exception\Data\DataControl;
 use KeilielOliveira\Exception\Instances\InstanceControl;
+use KeilielOliveira\Exception\Template\MessageTemplate;
 
 /**
  * Gerencia os dados usados para contextualizar exceções.
  */
 class Data {
-
     // Instancias de dependências da classe.
     private Config $config;
     private InstanceControl $instanceControl;
     private DataControl $dataControl;
+    private MessageTemplate $messageTemplate;
 
     /**
      * Inicia as dependências.
@@ -28,6 +29,7 @@ class Data {
             $this->config,
             $this->instanceControl
         );
+        $this->messageTemplate = new MessageTemplate( $this->config, $this );
     }
 
     /**
@@ -117,6 +119,7 @@ class Data {
     public function get( null|int|string $key = null ): mixed {
         $data = $this->dataControl->getData( $key );
         $this->instanceControl->clearTempInstance();
+
         return $data;
     }
 
@@ -133,5 +136,9 @@ class Data {
      */
     public function clearData(): void {
         $this->dataControl->clearData( true );
+    }
+
+    public function createMessage( string $template ): string {
+        return $this->messageTemplate->createMessage( $template );
     }
 }
