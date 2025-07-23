@@ -4,11 +4,11 @@ declare(strict_types = 1);
 
 namespace KeilielOliveira\Exception;
 
-class CoreFacade {
-    private static Data $data;
+class Facade {
+    private static Core $data;
 
     protected function __construct() {
-        self::$data = self::$data ?? new Data();
+        self::$data = self::$data ?? new Core();
     }
 
     /**

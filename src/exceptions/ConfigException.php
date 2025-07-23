@@ -2,6 +2,6 @@
 
 declare(strict_types = 1);
 
-namespace KeilielOliveira\Exception\Config;
+namespace KeilielOliveira\Exception\Exceptions;
 
 class ConfigException extends \Exception {}

@@ -7,11 +7,12 @@ namespace KeilielOliveira\Exception;
 use KeilielOliveira\Exception\Config\Config;
 use KeilielOliveira\Exception\Data\DataControl;
 use KeilielOliveira\Exception\Instances\InstanceControl;
+use KeilielOliveira\Exception\Message\MessageBuilder;
 
 /**
  * Gerencia os dados usados para contextualizar exceções.
  */
-class Data {
+class Core {
     /**
      * Inicia as dependências.
      */
@@ -20,6 +21,7 @@ class Data {
         $container->set( Config::class );
         $container->set( InstanceControl::class );
         $container->set( DataControl::class );
+        $container->set( MessageBuilder::class );
     }
 
     /**
@@ -170,5 +172,9 @@ class Data {
     /**
      * Cria uma mensagem com base no template passado e nos dados salvos.
      */
-    //public function createMessage( string $template ): string {}
+    public function createMessage( string $template ): string {
+        return Container::getContainer()->get( MessageBuilder::class )
+            ->buildMessage( $template )
+        ;
+    }
 }

@@ -2,6 +2,6 @@
 
 declare(strict_types = 1);
 
-namespace KeilielOliveira\Exception\Instances;
+namespace KeilielOliveira\Exception\Exceptions;
 
 class InstanceException extends \Exception {}

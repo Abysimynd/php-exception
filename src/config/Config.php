@@ -4,6 +4,8 @@ declare(strict_types = 1);
 
 namespace KeilielOliveira\Exception\Config;
 
+use KeilielOliveira\Exception\Exceptions\ConfigException;
+
 /**
  * Controla as configurações de execução.
  *

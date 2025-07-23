@@ -16,7 +16,7 @@ class Container {
     private array $dependencies = [];
 
     private function __construct( ?Container $container = null ) {
-        if(null != $container) {
+        if ( null != $container ) {
             self::$container = $container;
         }
     }
@@ -39,9 +39,11 @@ class Container {
     /**
      * Retorna o objeto da classe recebida se a mesma existir.
      *
- * @template T of object
- * @param class-string<T> $class
- * @return T
+     * @template T of object
+     *
+     * @param class-string<T> $class
+     *
+     * @return T
      */
     public function get( string $class ): mixed {
         if ( !isset( $this->dependencies[$class] ) ) {
@@ -50,8 +52,13 @@ class Container {
             );
         }
 
-        /** @var T $object */
         $object = $this->dependencies[$class];
+
+        if ( !$object instanceof $class ) {
+            throw new CoreException(
+                "A classe {$class} não possui um objeto valido."
+            );
+        }
 
         return $object;
     }

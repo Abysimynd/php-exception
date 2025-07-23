@@ -4,6 +4,8 @@ declare(strict_types = 1);
 
 namespace KeilielOliveira\Exception\Instances;
 
+use KeilielOliveira\Exception\Exceptions\InstanceException;
+
 /**
  * Controla as instancias (chaves) onde os dados são armazenados.
  */
