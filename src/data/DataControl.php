@@ -4,9 +4,7 @@ declare(strict_types = 1);
 
 namespace KeilielOliveira\Exception\Data;
 
-use KeilielOliveira\Exception\Config\Config;
 use KeilielOliveira\Exception\Helpers\ArrayHelper;
-use KeilielOliveira\Exception\Instances\InstanceControl;
 
 /**
  * Gerencia todos os dados.
@@ -17,8 +15,8 @@ class DataControl {
     /** @var array<string, array<mixed>> Armazena todos os dados */
     private array $data = [];
 
-    public function __construct( Config $config, InstanceControl $instanceControl ) {
-        $this->helper = new DataHelpers( $config, $instanceControl );
+    public function __construct() {
+        $this->helper = new DataHelpers();
     }
 
     /**
