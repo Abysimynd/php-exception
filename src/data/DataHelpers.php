@@ -5,6 +5,7 @@ declare(strict_types = 1);
 namespace KeilielOliveira\Exception\Data;
 
 use KeilielOliveira\Exception\Config\Config;
+use KeilielOliveira\Exception\Container;
 use KeilielOliveira\Exception\Helpers\ArrayHelper;
 use KeilielOliveira\Exception\Instances\InstanceControl;
 
@@ -12,19 +13,13 @@ class DataHelpers {
     /** @var array<string, array<mixed>> Dados salvos */
     private array $data;
 
-    private Config $config;
-    private InstanceControl $instanceControl;
-
-    public function __construct( Config $config, InstanceControl $instanceControl ) {
-        $this->config = $config;
-        $this->instanceControl = $instanceControl;
-    }
-
     /**
      * Retorna a instancia atual.
      */
     public function getInstance(): string {
-        return $this->instanceControl->getValidInstance();
+        $instanceControl = Container::getContainer()->get( InstanceControl::class );
+
+        return $instanceControl->getValidInstance();
     }
 
     /**
@@ -99,7 +94,7 @@ class DataHelpers {
             $keys = $newKeys;
         }
 
-        new KeysValidator( $this->config, $keys );
+        new KeysValidator( $keys );
 
         return $keys;
     }
@@ -110,7 +105,8 @@ class DataHelpers {
      * @throws DataException
      */
     private function getArrayIndexSeparators(): array {
-        $separators = $this->config->getConfig( 'array_index_separator' );
+        $config = Container::getContainer()->get( class: Config::class );
+        $separators = $config->getConfig( 'array_index_separator' );
 
         return is_array( $separators ) ? $separators : [$separators];
     }

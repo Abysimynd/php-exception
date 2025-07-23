@@ -7,32 +7,19 @@ namespace KeilielOliveira\Exception;
 use KeilielOliveira\Exception\Config\Config;
 use KeilielOliveira\Exception\Data\DataControl;
 use KeilielOliveira\Exception\Instances\InstanceControl;
-use KeilielOliveira\Exception\Template\MessageTemplate;
 
 /**
  * Gerencia os dados usados para contextualizar exceções.
  */
 class Data {
-    // Instancias de dependências da classe.
-    private Config $config;
-    private InstanceControl $instanceControl;
-    private DataControl $dataControl;
-    private MessageTemplate $messageTemplate;
-
     /**
      * Inicia as dependências.
      */
     public function __construct() {
-        $this->config = new Config();
-        $this->instanceControl = new InstanceControl();
-        $this->dataControl = new DataControl(
-            $this->config,
-            $this->instanceControl
-        );
-        $this->messageTemplate = new MessageTemplate(
-            $this->config,
-            $this
-        );
+        $container = Container::getContainer();
+        $container->set( Config::class );
+        $container->set( InstanceControl::class );
+        $container->set( DataControl::class );
     }
 
     /**
@@ -41,7 +28,9 @@ class Data {
      * @param array<mixed> $config
      */
     public function config( array $config ): void {
-        $this->config->setConfig( $config );
+        Container::getContainer()
+            ->get( Config::class )->setConfig( $config )
+        ;
     }
 
     /**
@@ -50,7 +39,9 @@ class Data {
      * Para realizar uma operação uma instancia deve estar definida ou uma exceção será lançada.
      */
     public function use( string $instance ): void {
-        $this->instanceControl->setInstance( $instance );
+        Container::getContainer()
+            ->get( InstanceControl::class )->setInstance( $instance )
+        ;
     }
 
     /**
@@ -60,7 +51,9 @@ class Data {
      * Para realizar uma operação uma instancia deve estar definida ou uma exceção será lançada.
      */
     public function in( string $instance ): self {
-        $this->instanceControl->setInstance( $instance, true );
+        Container::getContainer()
+            ->get( InstanceControl::class )->setInstance( $instance, true )
+        ;
 
         return $this;
     }
@@ -69,14 +62,18 @@ class Data {
      * Retorna a instancia atual ou null se não houver uma.
      */
     public function getInstance(): ?string {
-        return $this->instanceControl->getInstance();
+        return Container::getContainer()
+            ->get( InstanceControl::class )->getInstance()
+        ;
     }
 
     /**
      * Retorna a instancia temporária atual ou null se não houver uma.
      */
     public function getTempInstance(): ?string {
-        return $this->instanceControl->getInstance( true );
+        return Container::getContainer()
+            ->get( InstanceControl::class )->getInstance( true )
+        ;
     }
 
     /**
@@ -85,15 +82,22 @@ class Data {
      * A instancia temporária sempre tera prioridade se definida.
      */
     public function getDefinedInstance(): ?string {
-        return $this->instanceControl->getDefinedInstance();
+        return Container::getContainer()
+            ->get( InstanceControl::class )->getDefinedInstance()
+        ;
     }
 
     /**
      * Salva o valor na chave dentro da instancia atual.
      */
     public function set( int|string $key, mixed $value ): void {
-        $this->dataControl->setData( $key, $value );
-        $this->instanceControl->clearTempInstance();
+        Container::getContainer()
+            ->get( DataControl::class )->setData( $key, $value )
+        ;
+
+        Container::getContainer()
+            ->get( InstanceControl::class )->clearTempInstance()
+        ;
     }
 
     /**
@@ -102,8 +106,13 @@ class Data {
      * Caso a chave não seja encontrada uma exceção será lançada.
      */
     public function update( int|string $key, mixed $value ): void {
-        $this->dataControl->updateData( $key, $value );
-        $this->instanceControl->clearTempInstance();
+        Container::getContainer()
+            ->get( DataControl::class )->updateData( $key, $value )
+        ;
+
+        Container::getContainer()
+            ->get( InstanceControl::class )->clearTempInstance()
+        ;
     }
 
     /**
@@ -112,16 +121,26 @@ class Data {
      * Caso a chave não seja encontrada uma exceção será lançada.
      */
     public function remove( int|string $key ): void {
-        $this->dataControl->removeData( $key );
-        $this->instanceControl->clearTempInstance();
+        Container::getContainer()
+            ->get( DataControl::class )->removeData( $key )
+        ;
+
+        Container::getContainer()
+            ->get( InstanceControl::class )->clearTempInstance()
+        ;
     }
 
     /**
      * Retorna o valor da chave na instancia atual ou todos os dados da instancia se a chave for null.
      */
     public function get( null|int|string $key = null ): mixed {
-        $data = $this->dataControl->getData( $key );
-        $this->instanceControl->clearTempInstance();
+        $data = Container::getContainer()
+            ->get( DataControl::class )->getData( $key )
+        ;
+
+        Container::getContainer()
+            ->get( InstanceControl::class )->clearTempInstance()
+        ;
 
         return $data;
     }
@@ -130,21 +149,26 @@ class Data {
      * Limpa todos os dados da instancia atual.
      */
     public function clearInstance(): void {
-        $this->dataControl->clearData();
-        $this->instanceControl->clearTempInstance();
+        Container::getContainer()
+            ->get( DataControl::class )->clearData()
+        ;
+
+        Container::getContainer()
+            ->get( InstanceControl::class )->clearTempInstance()
+        ;
     }
 
     /**
      * Limpa todos os dados de todas as instancias.
      */
     public function clearData(): void {
-        $this->dataControl->clearData( true );
+        Container::getContainer()
+            ->get( DataControl::class )->clearData()
+        ;
     }
 
     /**
      * Cria uma mensagem com base no template passado e nos dados salvos.
      */
-    public function createMessage( string $template ): string {
-        return $this->messageTemplate->createMessage( $template );
-    }
+    //public function createMessage( string $template ): string {}
 }

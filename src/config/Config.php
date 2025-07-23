@@ -11,9 +11,7 @@ namespace KeilielOliveira\Exception\Config;
  *
  * @phpstan-type ConfigMap array{
  *      max_array_index: int,
- *      array_index_separator: non-empty-string|array<non-empty-string>
- * }
- * @phpstan-type ReservedConfigMap array{
+ *      array_index_separator: non-empty-string|array<non-empty-string>,
  *      reserved_keys: array<non-empty-string>
  * }
  */
@@ -21,16 +19,15 @@ class Config {
     /** @var ConfigMap Armazena todas as configurações */
     private array $config;
 
-    /** @var ReservedConfigMap Armazena todas as configurações reservadas e imutáveis */
-    private array $reservedConfig;
-
     /**
      * Recupera e defini as configurações de execução padrões.
      */
     public function __construct() {
         $default = new DefaultConfig();
-        $this->config = $default->getDefaultConfig();
-        $this->reservedConfig = $default->getReservedConfig();
+        $this->config = array_merge(
+            $default->getDefaultConfig(),
+            $default->getReservedConfig()
+        );
     }
 
     /**
@@ -61,24 +58,5 @@ class Config {
         }
 
         return $this->config[$config];
-    }
-
-    /**
-     * @template TKey of string ReservedConfigMap
-     *
-     * @param TKey $config
-     *
-     * @return ReservedConfigMap[TKey]
-     *
-     * @throws ConfigException
-     */
-    public function getReservedConfig( string $config ): mixed {
-        if ( !isset( $this->reservedConfig[$config] ) ) {
-            throw new ConfigException(
-                "A configuração {$config} não existe."
-            );
-        }
-
-        return $this->reservedConfig[$config];
     }
 }

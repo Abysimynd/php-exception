@@ -5,18 +5,16 @@ declare(strict_types = 1);
 namespace KeilielOliveira\Exception\Data;
 
 use KeilielOliveira\Exception\Config\Config;
+use KeilielOliveira\Exception\Container;
 
 class KeysValidator {
-    private Config $config;
-
     /** @var array<string> */
     private array $keys;
 
     /**
      * @param array<string> $keys
      */
-    public function __construct( Config $config, array $keys ) {
-        $this->config = $config;
+    public function __construct( array $keys ) {
         $this->keys = $keys;
         $this->validateKeys();
     }
@@ -27,7 +25,8 @@ class KeysValidator {
     }
 
     private function hasReachedIndexLimit(): void {
-        $maxIndex = $this->config->getConfig( 'max_array_index' );
+        $config = Container::getContainer()->get( Config::class );
+        $maxIndex = $config->getConfig( 'max_array_index' );
 
         if ( count( $this->keys ) - 1 > $maxIndex ) {
             throw new DataException(
@@ -42,7 +41,8 @@ class KeysValidator {
     }
 
     private function isReservedKey(): void {
-        $reservedKeys = $this->config->getReservedConfig( 'reserved_keys' );
+        $config = Container::getContainer()->get( Config::class );
+        $reservedKeys = $config->getConfig( 'reserved_keys' );
         $key = implode( '->', $this->keys );
 
         if ( in_array( $key, $reservedKeys ) ) {
