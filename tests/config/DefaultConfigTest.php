@@ -10,28 +10,20 @@ use PHPUnit\Framework\TestCase;
  * @coversNothing
  */
 final class DefaultConfigTest extends TestCase {
-    public function testIsSettingDefaultConfig(): void {
-        $defaultConfig = new DefaultConfig();
-        $reflectionClass = new ReflectionClass( $defaultConfig );
-        $property = $reflectionClass->getProperty( 'default' );
-        $property->setAccessible( true );
+    public function testIsReturningDefaultConfigNames(): void {
+        $default = new DefaultConfig();
 
-        $this->assertNotEmpty( $property->getValue( $defaultConfig ) );
-    }
-
-    public function testIsReturningConfigNames(): void {
-        $defaultConfig = new DefaultConfig();
-        $response = $defaultConfig->getDefaultConfigNames();
         $expected = 'max_array_index';
+        $response = $default->getDefaultConfigNames();
 
         $this->assertTrue( in_array( $expected, $response ) );
     }
 
-    public function testIsReturningConfigValuesTypes(): void {
-        $defaultConfig = new DefaultConfig();
-        $response = $defaultConfig->getDefaultConfigValuesType();
-        $response = ['max_array_index' => $response['max_array_index']];
-        $expected = ['max_array_index' => 'int'];
+    public function testIsReturningDefaultConfigValuesTypes(): void {
+        $default = new DefaultConfig();
+
+        $expected = ['max_array_index' => 'int', 'array_index_separator' => ['string']];
+        $response = $default->getDefaultConfigValuesType();
 
         $this->assertEquals( $expected, $response );
     }

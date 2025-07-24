@@ -5,10 +5,10 @@ declare(strict_types = 1);
 namespace KeilielOliveira\Exception;
 
 class Facade {
-    private static Core $data;
+    private static Core $core;
 
     protected function __construct() {
-        self::$data = self::$data ?? new Core();
+        self::$core = self::$core ?? new Core();
     }
 
     /**
@@ -18,7 +18,7 @@ class Facade {
      */
     public static function config( array $config ): void {
         new self();
-        self::$data->config( $config );
+        self::$core->config( $config );
     }
 
     /**
@@ -28,7 +28,7 @@ class Facade {
      */
     public static function use( string $instance ): void {
         new self();
-        self::$data->use( $instance );
+        self::$core->use( $instance );
     }
 
     /**
@@ -39,7 +39,7 @@ class Facade {
      */
     public static function in( string $instance ): self {
         new self();
-        self::$data->in( $instance );
+        self::$core->in( $instance );
 
         return new self();
     }
@@ -48,14 +48,14 @@ class Facade {
      * Retorna a instancia atual ou null se não houver uma.
      */
     public static function getInstance(): ?string {
-        return self::$data->getInstance();
+        return self::$core->getInstance();
     }
 
     /**
      * Retorna a instancia temporária atual ou null se não houver uma.
      */
     public static function getTempInstance(): ?string {
-        return self::$data->getTempInstance();
+        return self::$core->getTempInstance();
     }
 
     /**
@@ -64,14 +64,14 @@ class Facade {
      * A instancia temporária sempre tera prioridade se definida.
      */
     public static function getDefinedInstance(): ?string {
-        return self::$data->getDefinedInstance();
+        return self::$core->getDefinedInstance();
     }
 
     /**
      * Salva o valor na chave dentro da instancia atual.
      */
     public static function set( int|string $key, mixed $value ): void {
-        self::$data->set( $key, $value );
+        self::$core->set( $key, $value );
     }
 
     /**
@@ -80,7 +80,7 @@ class Facade {
      * Caso a chave não seja encontrada uma exceção será lançada.
      */
     public static function update( int|string $key, mixed $value ): void {
-        self::$data->update( $key, $value );
+        self::$core->update( $key, $value );
     }
 
     /**
@@ -89,34 +89,34 @@ class Facade {
      * Caso a chave não seja encontrada uma exceção será lançada.
      */
     public static function remove( int|string $key ): void {
-        self::$data->remove( $key );
+        self::$core->remove( $key );
     }
 
     /**
      * Retorna o valor da chave na instancia atual ou todos os dados da instancia se a chave for null.
      */
     public static function get( null|int|string $key = null ): mixed {
-        return self::$data->get( $key );
+        return self::$core->get( $key );
     }
 
     /**
      * Limpa todos os dados da instancia atual.
      */
     public static function clearInstance(): void {
-        self::$data->clearInstance();
+        self::$core->clearInstance();
     }
 
     /**
      * Limpa todos os dados de todas as instancias.
      */
     public static function clearData(): void {
-        self::$data->clearData();
+        self::$core->clearData();
     }
 
     /**
      * Cria uma mensagem com base no template passado e nos dados salvos.
      */
     public static function createMessage( string $template ): string {
-        return self::$data->createMessage( $template );
+        return self::$core->createMessage( $template );
     }
 }

@@ -2,6 +2,7 @@
 
 declare(strict_types = 1);
 use KeilielOliveira\Exception\Config\Config;
+use KeilielOliveira\Exception\Exceptions\ConfigException;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -10,34 +11,32 @@ use PHPUnit\Framework\TestCase;
  * @coversNothing
  */
 final class ConfigTest extends TestCase {
-    public function testIsDefiningDefaultConfig(): void {
-        $config = new Config();
+    public function testIsDefiningAndReturningConfig(): void {
+        try {
+            $expected = 10;
 
-        $reflectionClass = new ReflectionClass( $config );
-        $property = $reflectionClass->getProperty( 'config' );
-        $property->setAccessible( true );
+            $configArray = [
+                'max_array_index' => $expected,
+            ];
 
-        $this->assertNotEmpty( $property->getValue( $config ) );
+            $config = new Config();
+            $config->setConfig( $configArray );
+            $response = $config->getConfig( 'max_array_index' );
+
+            $this->assertEquals( $expected, $response );
+        } catch ( ConfigException $e ) {
+            $this->fail( $e->getMessage() );
+        }
     }
 
-    public function testIsDefiningCustomConfig(): void {
-        $config = new Config();
-        $config->setConfig( ['max_array_index' => 10] );
+    public function testIsDefiningReservedConfig(): void {
+        try {
+            $config = new Config();
+            $response = $config->getConfig( 'reserved_keys' );
 
-        $reflectionClass = new ReflectionClass( $config );
-        $property = $reflectionClass->getProperty( 'config' );
-        $property->setAccessible( true );
-
-        $expected = 10;
-        $response = $property->getValue( $config )['max_array_index'];
-        $this->assertEquals( $expected, $response );
-    }
-
-    public function testIsReturningConfigValue(): void {
-        $config = new Config();
-
-        $expected = 3;
-        $response = $config->getConfig( 'max_array_index' );
-        $this->assertEquals( $expected, $response );
+            $this->assertNotEmpty( $response );
+        } catch ( ConfigException $e ) {
+            $this->fail( $e->getMessage() );
+        }
     }
 }

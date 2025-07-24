@@ -6,7 +6,7 @@ namespace KeilielOliveira\Exception\Helpers;
 
 class ArrayHelper {
     /**
-     * Cria um array de arrays com base no caminho passado e coloca o valor no ultimo indice.
+     * Cria um array de arrays com base no caminho passado e coloca o valor no ultimo índice.
      *
      * @param array<int|string> $path
      *

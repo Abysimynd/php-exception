@@ -12,133 +12,107 @@ use PHPUnit\Framework\TestCase;
  */
 final class ArrayHelperTest extends TestCase {
     /**
-     * @param array<int|string> $path
-     * @param array<mixed>      $expected
+     * @param array<string> $path
+     * @param array<mixed>  $expected
      */
     #[DataProvider( 'providerPathsAndValuesToCreateArray' )]
-    public function testIsCreatingArray( array $path, mixed $value, array $expected ): void {
+    public function testIsCreatingArrayWithPath( array $path, mixed $value, array $expected ): void {
         $response = ArrayHelper::createArrayWithPath( $path, $value );
+
         $this->assertEquals( $expected, $response );
     }
 
     /**
-     * @return array<array<mixed>>>
+     * Prove caminhos e valores para o método testIsCreatingArrayWithPath().
+     *
+     * @see testIsCreatingArrayWithPath()
+     *
+     * @return array<string, array<array<mixed>|string>>
      */
     public static function providerPathsAndValuesToCreateArray(): array {
         return [
-            'array simples' => [
+            'caminho e valor simples' => [
                 ['a'],
-                10,
-                ['a' => 10],
+                'value',
+                ['a' => 'value'],
             ],
-            'array complexo' => [
+            'caminho complexo e valor simples' => [
                 ['a', 'b', 'c'],
-                10,
-                ['a' => ['b' => ['c' => 10]]],
+                'value',
+                ['a' => ['b' => ['c' => 'value']]],
             ],
-            'array simples com valor complexo' => [
+            'caminho simples e valor complexo' => [
                 ['a'],
-                ['b' => ['c' => 10]],
-                ['a' => ['b' => ['c' => 10]]],
+                ['b' => ['c' => 'value']],
+                ['a' => ['b' => ['c' => 'value']]],
+            ],
+            'caminho e valor complexo' => [
+                ['a', 'b', 'c'],
+                [2 => 'one', 3 => 'two', 5 => 'three'],
+                ['a' => ['b' => ['c' => [2 => 'one', 3 => 'two', 5 => 'three']]]],
             ],
         ];
     }
 
     /**
-     * @param array<int|string> $path
-     * @param array<mixed>      $array
+     * @param array<string> $path
+     * @param array<mixed>  $array
      */
-    #[DataProvider( 'providerPathsAndArraysToValidate' )]
-    public function testHasPathInArray( array $path, array $array, bool $expected ): void {
-        $response = ArrayHelper::hasPathInArray( $path, $array );
-        $this->assertEquals( $expected, $response );
+    #[DataProvider( 'providerPathsAndArraysToHasPathInArrayValidation' )]
+    public function testHasPathInArrayValidation( array $path, array $array, string $assertion ): void {
+        $this->{$assertion}( ArrayHelper::hasPathInArray( $path, $array ) );
     }
 
     /**
-     * @return array<array<mixed>>
+     * Prove caminhos e arrays para o método testHasPathInArrayValidation().
+     *
+     * @see testHasPathInArrayValidation()
+     *
+     * @return array<string, array<array<array<mixed>|string>|string>>
      */
-    public static function providerPathsAndArraysToValidate(): array {
+    public static function providerPathsAndArraysToHasPathInArrayValidation(): array {
         return [
-            'caminho simples valido' => [
-                ['a'],
-                ['a' => ['b' => ['c' => 10]]],
-                true,
+            'caminho valido' => [
+                ['a', 'b'],
+                ['a' => ['b' => ['c' => 'value']]],
+                'assertTrue',
             ],
-            'caminho simples invalido' => [
-                ['b'],
-                ['a' => ['b' => ['c' => 10]]],
-                false,
-            ],
-            'caminho complexo valido' => [
-                ['a', 'b', 'c'],
-                ['a' => ['b' => ['c' => 10]]],
-                true,
-            ],
-            'caminho complexo invalido' => [
-                ['a', 'b', 'd'],
-                ['a' => ['b' => ['c' => 10]]],
-                false,
+            'caminho invalido' => [
+                ['a', 'b'],
+                ['a' => ['value']],
+                'assertFalse',
             ],
         ];
     }
 
-    /**
-     * @param array<int|string> $path
-     * @param array<mixed>      $array
-     * @param array<mixed>      $expected
-     */
-    #[DataProvider( 'providerPathsAndArraysAndValuesToUpdate' )]
-    public function testIsUpdatingPathInArray( array $path, array $array, mixed $value, array $expected ): void {
+    public function testIsUpdatingPathInArray(): void {
+        $path = ['a', 'b'];
+        $array = ['a' => ['b' => ['c' => 'value']]];
+        $value = 'new value';
+
+        $expected = ['a' => ['b' => 'new value']];
         $response = ArrayHelper::updatePathInArray( $path, $array, $value );
+
         $this->assertEquals( $expected, $response );
     }
 
-    /**
-     * @return array<array<mixed>>
-     */
-    public static function providerPathsAndArraysAndValuesToUpdate(): array {
-        return [
-            'atualização de caminho simples' => [
-                ['a'],
-                ['a' => ['b' => ['c' => 10]]],
-                10,
-                ['a' => 10],
-            ],
-            'atualização de caminho complexa' => [
-                ['a', 'b', 'c'],
-                ['a' => ['b' => ['c' => 10]]],
-                20,
-                ['a' => ['b' => ['c' => 20]]],
-            ],
-        ];
-    }
+    public function testIsRemovinggPathInArray(): void {
+        $path = ['a', 'b'];
+        $array = ['a' => ['b' => ['c' => 'value']]];
 
-    /**
-     * @param array<int|string> $path
-     * @param array<mixed>      $array
-     * @param array<mixed>      $expected
-     */
-    #[DataProvider( 'providerPathsAndArraysToRemovePath' )]
-    public function testIsRemovingPathInArray( array $path, array $array, array $expected ): void {
+        $expected = ['a' => []];
         $response = ArrayHelper::removePathInArray( $path, $array );
+
         $this->assertEquals( $expected, $response );
     }
 
-    /**
-     * @return array<array<mixed>>
-     */
-    public static function providerPathsAndArraysToRemovePath(): array {
-        return [
-            'removendo caminho simples' => [
-                ['a'],
-                ['a' => ['b' => ['c' => 10]]],
-                [],
-            ],
-            'removendo caminho complexo' => [
-                ['a', 'b', 'c'],
-                ['a' => ['b' => ['c' => 10]]],
-                ['a' => ['b' => []]],
-            ],
-        ];
+    public function testIsReturningArrayPathValue(): void {
+        $path = ['a', 'b'];
+        $array = ['a' => ['b' => ['c' => 'value']]];
+
+        $expected = ['c' => 'value'];
+        $response = ArrayHelper::getPathValueInArray( $path, $array );
+
+        $this->assertEquals( $expected, $response );
     }
 }

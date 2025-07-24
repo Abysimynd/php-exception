@@ -2,6 +2,6 @@
 
 declare(strict_types = 1);
 
-namespace KeilielOliveira\Exception\Data;
+namespace KeilielOliveira\Exception\Exceptions;
 
 class DataException extends \Exception {}

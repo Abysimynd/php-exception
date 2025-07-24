@@ -13,7 +13,7 @@ class InstanceControl {
     private ?string $instance = null;
     private ?string $tempInstance = null;
 
-    public function setInstance( string $instance, bool $isTemp = false ): void {
+    public function set( string $instance, bool $isTemp = false ): void {
         new InstanceValidator( $instance );
 
         if ( !$isTemp ) {
@@ -25,16 +25,16 @@ class InstanceControl {
         $this->tempInstance = $instance;
     }
 
-    public function getInstance( bool $isTemp = false ): ?string {
+    public function get( bool $isTemp = false ): ?string {
         return !$isTemp ? $this->instance : $this->tempInstance;
     }
 
-    public function getDefinedInstance(): ?string {
+    public function getDefined(): ?string {
         return $this->tempInstance ?? $this->instance;
     }
 
-    public function getValidInstance(): string {
-        $instance = $this->getDefinedInstance();
+    public function getValid(): string {
+        $instance = $this->getDefined();
 
         if ( null == $instance ) {
             throw new InstanceException(
@@ -45,7 +45,7 @@ class InstanceControl {
         return $instance;
     }
 
-    public function clearTempInstance(): void {
+    public function clearTemp(): void {
         $this->tempInstance = null;
     }
 }

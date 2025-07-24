@@ -42,7 +42,7 @@ class Core {
      */
     public function use( string $instance ): void {
         Container::getContainer()
-            ->get( InstanceControl::class )->setInstance( $instance )
+            ->get( InstanceControl::class )->set( $instance )
         ;
     }
 
@@ -54,7 +54,7 @@ class Core {
      */
     public function in( string $instance ): self {
         Container::getContainer()
-            ->get( InstanceControl::class )->setInstance( $instance, true )
+            ->get( InstanceControl::class )->set( $instance, true )
         ;
 
         return $this;
@@ -65,7 +65,7 @@ class Core {
      */
     public function getInstance(): ?string {
         return Container::getContainer()
-            ->get( InstanceControl::class )->getInstance()
+            ->get( InstanceControl::class )->get()
         ;
     }
 
@@ -74,7 +74,7 @@ class Core {
      */
     public function getTempInstance(): ?string {
         return Container::getContainer()
-            ->get( InstanceControl::class )->getInstance( true )
+            ->get( InstanceControl::class )->get( true )
         ;
     }
 
@@ -85,7 +85,7 @@ class Core {
      */
     public function getDefinedInstance(): ?string {
         return Container::getContainer()
-            ->get( InstanceControl::class )->getDefinedInstance()
+            ->get( InstanceControl::class )->getDefined()
         ;
     }
 
@@ -94,11 +94,11 @@ class Core {
      */
     public function set( int|string $key, mixed $value ): void {
         Container::getContainer()
-            ->get( DataControl::class )->setData( $key, $value )
+            ->get( DataControl::class )->set( $key, $value )
         ;
 
         Container::getContainer()
-            ->get( InstanceControl::class )->clearTempInstance()
+            ->get( InstanceControl::class )->clearTemp()
         ;
     }
 
@@ -109,11 +109,11 @@ class Core {
      */
     public function update( int|string $key, mixed $value ): void {
         Container::getContainer()
-            ->get( DataControl::class )->updateData( $key, $value )
+            ->get( DataControl::class )->update( $key, $value )
         ;
 
         Container::getContainer()
-            ->get( InstanceControl::class )->clearTempInstance()
+            ->get( InstanceControl::class )->clearTemp()
         ;
     }
 
@@ -124,11 +124,11 @@ class Core {
      */
     public function remove( int|string $key ): void {
         Container::getContainer()
-            ->get( DataControl::class )->removeData( $key )
+            ->get( DataControl::class )->remove( $key )
         ;
 
         Container::getContainer()
-            ->get( InstanceControl::class )->clearTempInstance()
+            ->get( InstanceControl::class )->clearTemp()
         ;
     }
 
@@ -137,11 +137,11 @@ class Core {
      */
     public function get( null|int|string $key = null ): mixed {
         $data = Container::getContainer()
-            ->get( DataControl::class )->getData( $key )
+            ->get( DataControl::class )->get( $key )
         ;
 
         Container::getContainer()
-            ->get( InstanceControl::class )->clearTempInstance()
+            ->get( InstanceControl::class )->clearTemp()
         ;
 
         return $data;
@@ -152,11 +152,11 @@ class Core {
      */
     public function clearInstance(): void {
         Container::getContainer()
-            ->get( DataControl::class )->clearData()
+            ->get( DataControl::class )->clear()
         ;
 
         Container::getContainer()
-            ->get( InstanceControl::class )->clearTempInstance()
+            ->get( InstanceControl::class )->clearTemp()
         ;
     }
 
@@ -165,7 +165,7 @@ class Core {
      */
     public function clearData(): void {
         Container::getContainer()
-            ->get( DataControl::class )->clearData()
+            ->get( DataControl::class )->clear()
         ;
     }
 

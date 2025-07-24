@@ -46,14 +46,14 @@ class DataKeysReplace implements MessageReplaceInterface {
     private function setDataInstance(): void {
         if ( null != $this->index ) {
             Container::getContainer()->get( InstanceControl::class )
-                ->setInstance( $this->index, true )
+                ->set( $this->index, true )
             ;
         }
     }
 
     private function getData(): string {
         $data = Container::getContainer()->get( DataControl::class )
-            ->getData( $this->key )
+            ->get( $this->key )
         ;
 
         return is_string( $data ) ? $data : var_export( $data, true );

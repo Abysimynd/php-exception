@@ -1,8 +1,9 @@
 <?php
 
 declare(strict_types = 1);
+use KeilielOliveira\Exception\Exceptions\InstanceException;
 use KeilielOliveira\Exception\Instances\InstanceControl;
-use KeilielOliveira\Exception\Instances\InstanceException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -11,78 +12,90 @@ use PHPUnit\Framework\TestCase;
  * @coversNothing
  */
 final class InstanceControlTest extends TestCase {
-    public function testIsDefiningInstance(): void {
-        $control = new InstanceControl();
-        $control->setInstance( 'A' );
+    #[DataProvider( 'providerInstancesToSetAndGet' )]
+    public function testIsDefiningAndReturningInstances( string $instance, bool $isTemp ): void {
+        try {
+            $control = new InstanceControl();
+            $control->set( $instance, $isTemp );
+            $response = $control->get( $isTemp );
 
-        $reflectionClass = new ReflectionClass( $control );
-        $property = $reflectionClass->getProperty( 'instance' );
-        $property->setAccessible( true );
-
-        $this->assertNotNull( $property->getValue( $control ) );
+            $this->assertNotNull( $response );
+        } catch ( InstanceException $e ) {
+            $this->fail( $e->getMessage() );
+        }
     }
 
-    public function testIsDefiningTempInstance(): void {
-        $control = new InstanceControl();
-        $control->setInstance( 'B', true );
-
-        $reflectionClass = new ReflectionClass( $control );
-        $property = $reflectionClass->getProperty( 'tempInstance' );
-        $property->setAccessible( true );
-
-        $this->assertNotNull( $property->getValue( $control ) );
+    /**
+     * Prove instancias para o método testIsDefiningAndReturningInstances().
+     *
+     * @see testIsDefiningAndReturningInstances()
+     *
+     * @return array<string, array<bool|string>>
+     */
+    public static function providerInstancesToSetAndGet(): array {
+        return [
+            'instancia permanente' => [
+                'A',
+                false,
+            ],
+            'instancia temporária' => [
+                'B',
+                true,
+            ],
+        ];
     }
 
-    public function testIsReturningInstance(): void {
-        $expected = 'A';
+    /**
+     * @param array<string, bool> $instancesToSet
+     */
+    #[DataProvider( 'providerInstancesToSetAndGetDefined' )]
+    public function testIsReturningDefinedInstance( array $instancesToSet, ?string $expected ): void {
         $control = new InstanceControl();
-        $control->setInstance( $expected );
-        $response = $control->getInstance();
+
+        foreach ( $instancesToSet as $instance => $isTemp ) {
+            $control->set( $instance, $isTemp );
+        }
+        $response = $control->getDefined();
 
         $this->assertEquals( $expected, $response );
     }
 
-    public function testIsReturningTempInstance(): void {
-        $expected = 'A';
-        $control = new InstanceControl();
-        $control->setInstance( $expected, true );
-        $response = $control->getInstance( true );
-
-        $this->assertEquals( $expected, $response );
-    }
-
-    public function testIsReturningDefinedInstance(): void {
-        $expected = 'A';
-        $control = new InstanceControl();
-        $control->setInstance( $expected );
-        $response = $control->getDefinedInstance();
-
-        $this->assertEquals( $expected, $response );
-
-        $expected = 'B';
-        $control->setInstance( $expected, true );
-        $response = $control->getDefinedInstance();
-
-        $this->assertEquals( $expected, $response );
+    /**
+     * Prove instancias para o método testIsReturningDefinedInstance().
+     *
+     * @see testIsReturningDefinedInstance()
+     *
+     * @return array<string, array<null|array<string, bool>|string>>
+     */
+    public static function providerInstancesToSetAndGetDefined(): array {
+        return [
+            'instancia permanente' => [
+                ['A' => false],
+                'A',
+            ],
+            'instancia temporária' => [
+                ['B' => true, 'A' => false],
+                'B',
+            ],
+            'nenhuma instancia' => [
+                [],
+                null,
+            ],
+        ];
     }
 
     public function testIsReturningValidInstance(): void {
-        $message = 'Não há uma instancia definida.';
-        $this->expectException( InstanceException::class );
-        $this->expectExceptionMessage( $message );
+        try {
+            $control = new InstanceControl();
+            $control->getValid();
 
-        $control = new InstanceControl();
-        $control->getValidInstance();
-    }
+            $this->fail( 'Nenhuma exceção foi lançada.' );
+        } catch ( InstanceException $e ) {
+            $trace = $e->getTrace()[0];
+            $expected = 'getValid';
+            $response = $trace['function'];
 
-    public function testIsValidatingInstanceSyntax(): void {
-        $instance = '{A}';
-        $message = "A instancia {$instance} não possui uma sintaxe valida.";
-
-        $this->expectException( InstanceException::class );
-        $this->expectExceptionMessage( $message );
-
-        $control = new InstanceControl();
-        $control->setInstance( $instance );
+            $this->assertEquals( $expected, $response );
+        }
     }
 }

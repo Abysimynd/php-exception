@@ -10,17 +10,17 @@
         <testsuite name="config">
             <directory>tests/config</directory>
         </testsuite>
+        <testsuite name="data">
+            <directory>tests/data</directory>
+        </testsuite>
         <testsuite name="helpers">
             <directory>tests/helpers</directory>
         </testsuite>
         <testsuite name="instances">
             <directory>tests/instances</directory>
         </testsuite>
-        <testsuite name="data">
-            <directory>tests/data</directory>
-        </testsuite>
-        <testsuite name="template">
-            <directory>tests/template</directory>
+        <testsuite name="message">
+            <directory>tests/message</directory>
         </testsuite>
     </testsuites>
 

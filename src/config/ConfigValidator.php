@@ -102,6 +102,8 @@ class ConfigValidator {
 
         if ( is_array( $value ) ) {
             $callback = function ( mixed $value ): bool {
+                $value = is_string( $value ) ? trim( $value ) : $value;
+
                 return !empty( $value );
             };
 

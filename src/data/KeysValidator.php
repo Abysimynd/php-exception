@@ -6,6 +6,7 @@ namespace KeilielOliveira\Exception\Data;
 
 use KeilielOliveira\Exception\Config\Config;
 use KeilielOliveira\Exception\Container;
+use KeilielOliveira\Exception\Exceptions\DataException;
 
 class KeysValidator {
     /** @var array<string> */
@@ -45,7 +46,7 @@ class KeysValidator {
         $reservedKeys = $config->getConfig( 'reserved_keys' );
         $key = implode( '->', $this->keys );
 
-        if ( in_array( $key, $reservedKeys ) ) {
+        if ( isset( $reservedKeys[$key] ) ) {
             throw new DataException(
                 "A chave {$key} é reservada para o uso do sistema."
             );

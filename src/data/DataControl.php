@@ -10,19 +10,19 @@ use KeilielOliveira\Exception\Helpers\ArrayHelper;
  * Gerencia todos os dados.
  */
 class DataControl {
-    private DataHelpers $helper;
+    private PrepareData $helper;
 
     /** @var array<string, array<mixed>> Armazena todos os dados */
     private array $data = [];
 
     public function __construct() {
-        $this->helper = new DataHelpers();
+        $this->helper = new PrepareData();
     }
 
     /**
      * Salva um dado dentro da chave na instancia atual.
      */
-    public function setData( int|string $key, mixed $value ): void {
+    public function set( int|string $key, mixed $value ): void {
         $instance = $this->helper->getInstance();
         [$keys, $data] = $this->helper->prepareArgs( $this->data, $key, $instance );
 
@@ -33,7 +33,7 @@ class DataControl {
     /**
      * Atualiza o valor da chave na instancia atual.
      */
-    public function updateData( int|string $key, mixed $value ): void {
+    public function update( int|string $key, mixed $value ): void {
         $instance = $this->helper->getInstance();
         [$keys, $data] = $this->helper->prepareArgs( $this->data, $key, $instance );
 
@@ -46,7 +46,7 @@ class DataControl {
     /**
      * Remove a chave na instancia atual.
      */
-    public function removeData( int|string $key ): void {
+    public function remove( int|string $key ): void {
         $instance = $this->helper->getInstance();
         [$keys, $data] = $this->helper->prepareArgs( $this->data, $key, $instance );
 
@@ -59,7 +59,7 @@ class DataControl {
     /**
      * Retorna o valor da chave na instancia atual.
      */
-    public function getData( null|int|string $key = null ): mixed {
+    public function get( null|int|string $key = null ): mixed {
         $instance = $this->helper->getInstance();
         [$keys, $data] = $this->helper->prepareArgs( $this->data, $key, $instance );
 
@@ -75,7 +75,7 @@ class DataControl {
     /**
      * Deleta a instancia atual ou todos os dados.
      */
-    public function clearData( bool $allInstances = false ): void {
+    public function clear( bool $allInstances = false ): void {
         if ( !$allInstances ) {
             $instance = $this->helper->getInstance();
             unset( $this->data[$instance] );

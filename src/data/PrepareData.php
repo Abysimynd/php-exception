@@ -6,10 +6,11 @@ namespace KeilielOliveira\Exception\Data;
 
 use KeilielOliveira\Exception\Config\Config;
 use KeilielOliveira\Exception\Container;
+use KeilielOliveira\Exception\Exceptions\DataException;
 use KeilielOliveira\Exception\Helpers\ArrayHelper;
 use KeilielOliveira\Exception\Instances\InstanceControl;
 
-class DataHelpers {
+class PrepareData {
     /** @var array<string, array<mixed>> Dados salvos */
     private array $data;
 
@@ -19,7 +20,7 @@ class DataHelpers {
     public function getInstance(): string {
         $instanceControl = Container::getContainer()->get( InstanceControl::class );
 
-        return $instanceControl->getValidInstance();
+        return $instanceControl->getValid();
     }
 
     /**

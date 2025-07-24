@@ -1,8 +1,8 @@
 <?php
 
 declare(strict_types = 1);
-use KeilielOliveira\Exception\Config\ConfigException;
 use KeilielOliveira\Exception\Config\ConfigValidator;
+use KeilielOliveira\Exception\Exceptions\ConfigException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
@@ -14,148 +14,153 @@ use PHPUnit\Framework\TestCase;
 final class ConfigValidatorTest extends TestCase {
     public function testIsValidConfigName(): void {
         try {
-            $config = ['max_array_index' => 10];
-            new ConfigValidator( $config );
+            $configArray = [
+                'max_array_index' => 10,
+                'array_index_separator' => ['>', '<'],
+            ];
 
+            new ConfigValidator( $configArray );
             $this->assertTrue( true );
-        } catch ( ConfigException|Exception $e ) {
-            $this->fail( 'Uma exceção foi lançada quando não deveria.' );
+        } catch ( ConfigException $e ) {
+            $this->fail( $e->getMessage() );
         }
     }
 
-    public function testIsValidConfigNameWithInvalidConfig(): void {
+    /**
+     * @param array<string, array<array<string, array<mixed>|int>>>
+     */
+    #[DataProvider( 'providerInvalidConfigName' )]
+    public function testIsInvalidConfigName( array $configArray ): void {
         try {
-            $config = ['!key' => '!value'];
-            new ConfigValidator( $config );
-
+            new ConfigValidator( $configArray );
             $this->fail( 'Nenhuma exceção foi lançada.' );
         } catch ( ConfigException $e ) {
             $trace = $e->getTrace()[0];
-            $expected = ['class' => ConfigValidator::class, 'method' => 'isValidConfigName'];
-            $response = ['class' => $trace['class'], 'method' => $trace['function']];
 
-            $this->assertInstanceOf( ConfigException::class, $e );
+            $expected = 'isValidConfigName';
+            $response = $trace['function'];
+
             $this->assertEquals( $expected, $response );
         }
     }
 
     /**
-     * @param array<string, array<mixed>>
+     * Prove configurações com nomes inválidos para o método testIsInvalidConfigName().
+     *
+     * @see testIsInvalidConfigName()
+     *
+     * @return array<string, array<array<array<mixed>|int>>>
      */
-    #[DataProvider( 'providerValidConfigToValidateConfigValueType' )]
-    public function testIsValidConfigValueType( array $config ): void {
-        try {
-            new ConfigValidator( $config );
-            $this->assertTrue( true );
-        } catch ( ConfigException|Exception $e ) {
-            $this->fail( 'Uma exceção foi lançada quando não deveria.' );
-        }
-    }
-
-    /**
-     * @return array<string, array<mixed>>
-     */
-    public static function providerValidConfigToValidateConfigValueType(): array {
+    public static function providerInvalidConfigName(): array {
         return [
-            'tipo simples' => [
-                ['max_array_index' => 10],
+            'configuração simples' => [
+                ['invalid_name' => 10],
             ],
-            'tipo complexo' => [
-                ['array_index_separator' => ['a', 'b', 'c']],
+            'configuração privada' => [
+                ['reserved_keys' => []],
             ],
         ];
     }
 
     /**
-     * @param array<string, array<mixed>>
+     * @param array<string, array<array<string, array<non-empty-string>|non-empty-string>>>
      */
-    #[DataProvider( 'providerInValidConfigToValidateConfigValueType' )]
-    public function testIsValidConfigValueTypeWithInvalidConfig( array $config ): void {
+    #[DataProvider( 'providerValidConfigValuesType' )]
+    public function testIsValidConfigValueType( array $configArray ): void {
         try {
-            new ConfigValidator( $config );
+            new ConfigValidator( $configArray );
+            $this->assertTrue( true );
+        } catch ( ConfigException $e ) {
+            $this->fail( $e->getMessage() );
+        }
+    }
+
+    /**
+     * Prove configurações com valores de tipos validos para o método testIsValidConfigValueType().
+     *
+     * @see testIsValidConfigValueType()
+     *
+     * @return array<string, array<array<string, array<non-empty-string>|non-empty-string>>>
+     */
+    public static function providerValidConfigValuesType(): array {
+        return [
+            'tipo de valor simples' => [
+                ['array_index_separator' => '>'],
+            ],
+            'tipo de valor complexo' => [
+                ['array_index_separator' => ['<', '>']],
+            ],
+        ];
+    }
+
+    /**
+     * @param array<string, array<array<string, array<int|non-empty-string>|int>>>
+     */
+    #[DataProvider( 'providerInvalidConfigValuesType' )]
+    public function testIsInvalidConfigValueType( array $configArray ): void {
+        try {
+            new ConfigValidator( $configArray );
             $this->fail( 'Nenhuma exceção foi lançada.' );
-        } catch ( ConfigException|Exception $e ) {
+        } catch ( ConfigException $e ) {
             $trace = $e->getTrace()[0];
-            $expected = ['class' => ConfigValidator::class, 'method' => 'isValidConfigValueType'];
-            $response = ['class' => $trace['class'], 'method' => $trace['function']];
 
-            $this->assertInstanceOf( ConfigException::class, $e );
+            $expected = 'isValidConfigValueType';
+            $response = $trace['function'];
+
             $this->assertEquals( $expected, $response );
         }
     }
 
     /**
-     * @return array<string, array<mixed>>
+     * Prove configurações com valores de tipos inválidos para o método testIsInvalidConfigValueType().
+     *
+     * @see testIsInvalidConfigValueType()
+     *
+     * @return array<string, array<array<string, array<int|non-empty-string>|int>>>
      */
-    public static function providerInvalidConfigToValidateConfigValueType(): array {
+    public static function providerInvalidConfigValuesType(): array {
         return [
-            'tipo simples' => [
-                ['max_array_index' => '10'],
+            'tipo de valor simples' => [
+                ['array_index_separator' => 10],
             ],
-            'tipo complexo' => [
-                ['array_index_separator' => ['a', 'b', 10]],
+            'tipo de valor complexo' => [
+                ['array_index_separator' => ['<', 10, '>']],
             ],
         ];
     }
 
     /**
-     * @param array<string, array<mixed>>
+     * @param array<string, array<array<string, string|string[]>>>
      */
-    #[DataProvider( 'providerValidConfigToValidateConfigValue' )]
-    public function testIsValidConfigValue( array $config ): void {
+    #[DataProvider( 'providerInvalidConfigValue' )]
+    public function testIsInvalidConfigValue( array $configArray ): void {
         try {
-            new ConfigValidator( $config );
-            $this->assertTrue( true );
-        } catch ( ConfigException|Exception $e ) {
-            $this->fail( 'Uma exceção foi lançada quando não deveria.' );
+            new ConfigValidator( $configArray );
+            $this->fail( 'Nenhuma exceção foi lançada.' );
+        } catch ( ConfigException $e ) {
+            $trace = $e->getTrace()[0];
+
+            $expected = 'isValidConfigValue';
+            $response = $trace['function'];
+
+            $this->assertEquals( $expected, $response );
         }
     }
 
     /**
-     * @return array<string, array<mixed>>
+     * Prove configurações com valores inválidos para o método testIsInvalidConfigValue().
+     *
+     * @see testIsInvalidConfigValue()
+     *
+     * @return array<string, array<array<string, string|string[]>>>
      */
-    public static function providerValidConfigToValidateConfigValue(): array {
+    public static function providerInvalidConfigValue(): array {
         return [
             'valor simples' => [
-                ['array_index_separator' => '-'],
+                ['array_index_separator' => '  '],
             ],
             'valor complexo' => [
-                ['array_index_separator' => ['-', '_', '=']],
-            ],
-        ];
-    }
-
-    /**
-     * @param array<string, array<mixed>>
-     */
-    #[DataProvider( 'providerInvalidConfigToValidateConfigValue' )]
-    public function testIsValidConfigValueWithInvalidConfig( array $config ): void {
-        try {
-            new ConfigValidator( $config );
-            $this->fail( 'Nenhuma exceção foi lançada.' );
-        } catch ( ConfigException|Exception $e ) {
-            $trace = $e->getTrace()[0];
-            $expected = ['class' => ConfigValidator::class, 'method' => 'isValidConfigValue'];
-            $response = ['class' => $trace['class'], 'method' => $trace['function']];
-
-            $this->assertInstanceOf( ConfigException::class, $e );
-            $this->assertEquals( $expected, $response );
-        }
-    }
-
-    /**
-     * @return array<string, array<mixed>>
-     */
-    public static function providerInvalidConfigToValidateConfigValue(): array {
-        return [
-            'valor simples' => [
-                ['array_index_separator' => ''],
-            ],
-            'valor complexo' => [
-                ['array_index_separator' => []],
-            ],
-            'array de valores simples' => [
-                ['array_index_separator' => ['a', '', 'c']],
+                ['array_index_separator' => ['<', '  ', '>']],
             ],
         ];
     }
