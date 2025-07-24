@@ -20,4 +20,4 @@ try {
 }
 ```
 
-Este é um exemplo de uso simples da biblioteca, para compreender melhor seu uso e funcionamento leia .
+Este é um exemplo de uso simples da biblioteca, para compreender melhor seu uso e funcionamento leia [Documetação](./docs/documentação.md).
