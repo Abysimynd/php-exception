@@ -35,5 +35,4 @@ return new Config()
     '@PhpCsFixer' => true,
     ...$customRules
 ])
-->setFinder($finder)
-->setCacheFile(__DIR__ . '/dependencies/.php-cs-fixer.cache');
+->setFinder($finder);

@@ -1,23 +1,59 @@
-# Uso
+# Descrição
 
-Essa biblioteca foi criada sem um proposito especifico, ela age como um repositório de dados para contextualizar exceções.
+Essa biblioteca tem como objetivo fornecer uma forma de auxiliar na geração de exceções mais completas, ela fornece uma variedade de funcionalidades de armazenamento de dados e geração mensagens com base em templates.
 
-***Uso simples:***
+# Uso simples
+
 ```php
 <?php
 
-use KeilielOliveira\Exception\Facade;
+use KeilielOliveira\Exception\CoreFacade;
+
+require_once 'vendor/autoload.php';
+
+CoreFacade::setInstance( 'A' );
+CoreFacade::set( 'error', 'error type' );
+
+echo CoreFacade::get( 'error' );
+```
+
+# Uso completo
+
+```php
+<?php
+
+use KeilielOliveira\Exception\CoreFacade;
 
 require_once 'vendor/autoload.php';
 
 try {
-    Facade::use( 'Instance_A' );
-    Facade::set( 'key', 'value' );
+    CoreFacade::setInstance( 'variaveis' );
+    $str = 'string';
 
-    throw new Exception( Facade::createMessage( '{key}' ) );
+    if ( is_string( $str ) ) {
+        CoreFacade::set( 'vars.invalid_var', $str );
+        CoreFacade::setInstance( 'erros' );
+        CoreFacade::set( 'erro.tipo', 'variavel invalida' );
+
+        throw new Exception(
+            CoreFacade::buildMessage(
+                'Erro: {erro.tipo} no arquivo {__FILE__} linha {__LINE__}: {[variaveis]vars}'
+            )
+        );
+    }
 } catch ( Exception $e ) {
-    
+    echo $e->getMessage();
 }
 ```
 
-Este é um exemplo de uso simples da biblioteca, para compreender melhor seu uso e funcionamento leia [Documetação](./docs/documentação.md).
+---
+
+O proposito dessa biblioteca é simples, ela oferece somente funcionalidades simples para facilitar a geração de exceções mais descritivas e de forma mais simples.
+
+# Documentação
+
+Aqui segue-se um sumario da documentação:
+
+- [Controle de instancias](./doc/instancias.md)
+- [Controle de dados](./doc/controle_de_dados.md)
+- [Geração de mensagens](./doc/mensagens.md)

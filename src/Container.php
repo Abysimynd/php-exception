@@ -4,69 +4,40 @@ declare(strict_types = 1);
 
 namespace KeilielOliveira\Exception;
 
-use KeilielOliveira\Exception\Exceptions\CoreException;
+use KeilielOliveira\Exception\Validators\ContainerValidator;
 
-/**
- * Contêiner de dependências.
- */
 class Container {
-    private static Container $container;
+    private static self $container;
 
-    /** @var array<class-string, object> Armazena as instâncias das dependências */
-    private array $dependencies = [];
+    /** @var array<class-string, object> */
+    private array $instances = [];
 
-    private function __construct( ?Container $container = null ) {
-        if ( null != $container ) {
-            self::$container = $container;
-        }
-    }
-
-    /**
-     * Defini e armazena o objeto da classe recebida.
-     *
-     * @throws CoreException
-     */
     public function set( string $class ): void {
-        if ( !class_exists( $class ) ) {
-            throw new CoreException(
-                "A classe {$class} não existe."
-            );
-        }
-        $this->dependencies[$class] = new $class();
-        new Container( $this );
+        $validator = new ContainerValidator( $class, $this->instances );
+        $validator->validate();
+
+        /** @var class-string $class */
+        $object = new $class();
+        $this->instances[$class] = $object;
+        self::$container = $this;
     }
 
     /**
-     * Retorna o objeto da classe recebida se a mesma existir.
-     *
      * @template T of object
      *
      * @param class-string<T> $class
      *
      * @return T
      */
-    public function get( string $class ): mixed {
-        if ( !isset( $this->dependencies[$class] ) ) {
-            throw new CoreException(
-                "A classe {$class} não foi registrada."
-            );
-        }
+    public function get( string $class ): object {
+        $validator = new ContainerValidator( $class, $this->instances, true );
+        $validator->validate();
 
-        $object = $this->dependencies[$class];
-
-        if ( !$object instanceof $class ) {
-            throw new CoreException(
-                "A classe {$class} não possui um objeto valido."
-            );
-        }
-
-        return $object;
+        // @phpstan-ignore-next-line - Ignorando o erro porque o phpstan não identifica que o objeto é T.
+        return $this->instances[$class];
     }
 
-    /**
-     * Retorna a instancia do container atual.
-     */
     public static function getContainer(): self {
-        return self::$container ?? new self();
+        return self::$container ?? new Container();
     }
 }

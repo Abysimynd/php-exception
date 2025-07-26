@@ -5,13 +5,10 @@ declare(strict_types = 1);
 namespace KeilielOliveira\Exception;
 
 /**
- * Núcleo da biblioteca, contém todos os métodos para o uso da mesma.
+ * Interface simplifica e estática da classe principal.
  */
-class Core {
-    public function __construct() {
-        Container::getContainer()->set( InstanceControl::class );
-        Container::getContainer()->set( Data::class );
-    }
+class CoreFacade {
+    private static Core $core;
 
     /**
      * Defini uma instancia permanente que será usada em todas as operações seguintes até que a mesma seja
@@ -19,9 +16,8 @@ class Core {
      *
      * Documentação: https://github.com/Abysimynd/php-exception/blob/master/README.md
      */
-    public function setInstance( string $instance ): void {
-        $control = Container::getContainer()->get( InstanceControl::class );
-        $control->setInstance( $instance );
+    public static function setInstance( string $instance ): void {
+        self::getObjectInstance()->setInstance( $instance );
     }
 
     /**
@@ -33,11 +29,10 @@ class Core {
      *
      * Documentação: https://github.com/Abysimynd/php-exception/blob/master/README.md
      */
-    public function setTempInstance( string $instance ): self {
-        $control = Container::getContainer()->get( InstanceControl::class );
-        $control->setInstance( $instance, true );
+    public static function setTempInstance( string $instance ): self {
+        self::getObjectInstance()->setTempInstance( $instance );
 
-        return $this;
+        return new self();
     }
 
     /**
@@ -45,10 +40,8 @@ class Core {
      *
      * Documentação: https://github.com/Abysimynd/php-exception/blob/master/README.md
      */
-    public function getInstance(): ?string {
-        $control = Container::getContainer()->get( InstanceControl::class );
-
-        return $control->getInstance();
+    public static function getInstance(): ?string {
+        return self::getObjectInstance()->getInstance();
     }
 
     /**
@@ -56,10 +49,8 @@ class Core {
      *
      * Documentação: https://github.com/Abysimynd/php-exception/blob/master/README.md
      */
-    public function getTempInstance(): ?string {
-        $control = Container::getContainer()->get( InstanceControl::class );
-
-        return $control->getInstance( true );
+    public static function getTempInstance(): ?string {
+        return self::getObjectInstance()->getTempInstance();
     }
 
     /**
@@ -69,10 +60,8 @@ class Core {
      *
      * Documentação: https://github.com/Abysimynd/php-exception/blob/master/README.md
      */
-    public function getDefinedInstance(): ?string {
-        $control = Container::getContainer()->get( InstanceControl::class );
-
-        return $control->getDefinedInstance();
+    public static function getDefinedInstance(): ?string {
+        return self::getObjectInstance()->getDefinedInstance();
     }
 
     /**
@@ -90,14 +79,8 @@ class Core {
      *
      * documentação: https://github.com/Abysimynd/php-exception/blob/master/README.md
      */
-    public function set( int|string $key, mixed $value ): void {
-        [$key, $instance, $data] = new PrepareCoreArgs( $key )->getArgs();
-
-        $control = new DataControl( $data );
-        $preparedData = $control->set( $key, $value );
-
-        $data = Container::getContainer()->get( Data::class );
-        $data->setData( $instance, $preparedData );
+    public static function set( int|string $key, mixed $value ): void {
+        self::getObjectInstance()->set( $key, $value );
     }
 
     /**
@@ -114,14 +97,8 @@ class Core {
      *
      * documentação: https://github.com/Abysimynd/php-exception/blob/master/README.md
      */
-    public function update( int|string $key, mixed $value ): void {
-        [$key, $instance, $data] = new PrepareCoreArgs( $key )->getArgs();
-
-        $control = new DataControl( $data );
-        $preparedData = $control->update( $key, $value );
-
-        $data = Container::getContainer()->get( Data::class );
-        $data->setData( $instance, $preparedData );
+    public static function update( int|string $key, mixed $value ): void {
+        self::getObjectInstance()->update( $key, $value );
     }
 
     /**
@@ -138,14 +115,8 @@ class Core {
      *
      * documentação: https://github.com/Abysimynd/php-exception/blob/master/README.md
      */
-    public function remove( int|string $key ): void {
-        [$key, $instance, $data] = new PrepareCoreArgs( $key )->getArgs();
-
-        $control = new DataControl( $data );
-        $preparedData = $control->remove( $key );
-
-        $data = Container::getContainer()->get( Data::class );
-        $data->setData( $instance, $preparedData );
+    public static function remove( int|string $key ): void {
+        self::getObjectInstance()->remove( $key );
     }
 
     /**
@@ -165,12 +136,8 @@ class Core {
      *
      * documentação: https://github.com/Abysimynd/php-exception/blob/master/README.md
      */
-    public function get( null|int|string $key = null ): mixed {
-        [$key, $instance, $data] = new PrepareCoreArgs( $key )->getArgs();
-
-        $control = new DataControl( $data );
-
-        return $control->get( $key );
+    public static function get( null|int|string $key = null ): mixed {
+        return self::getObjectInstance()->get( $key );
     }
 
     /**
@@ -181,12 +148,8 @@ class Core {
      *
      * documentação: https://github.com/Abysimynd/php-exception/blob/master/README.md
      */
-    public function clearInstanceData(): void {
-        $control = Container::getContainer()->get( InstanceControl::class );
-        $instance = $control->getValidInstance();
-
-        $control = Container::getContainer()->get( Data::class );
-        $control->clearData( $instance );
+    public static function clearInstanceData(): void {
+        self::getObjectInstance()->clearInstanceData();
     }
 
     /**
@@ -197,9 +160,8 @@ class Core {
      *
      * documentação: https://github.com/Abysimynd/php-exception/blob/master/README.md
      */
-    public function clearAllData(): void {
-        $control = Container::getContainer()->get( Data::class );
-        $control->clearData( null );
+    public static function clearAllData(): void {
+        self::getObjectInstance()->clearAllData();
     }
 
     /**
@@ -210,9 +172,13 @@ class Core {
      *
      * documentação: https://github.com/Abysimynd/php-exception/blob/master/README.md
      */
-    public function buildMessage( string $template ): string {
-        $builder = new BuildMessage( $template );
+    public static function buildMessage( string $template ): string {
+        return self::getObjectInstance()->buildMessage( $template );
+    }
 
-        return $builder->getMessage();
+    private static function getObjectInstance(): Core {
+        self::$core = self::$core ?? new Core();
+
+        return self::$core;
     }
 }
